@@ -16,3 +16,33 @@ plan.out
 # Variable files (sensitive)
 *.tfvars
 *.tfvars.json
+
+# Helm sensitive values
+**/values-prod.yaml
+**/values-staging.yaml
+**/secrets.yaml
+
+# Kubernetes secrets
+**/secret*.yaml
+**/secret*.yml
+
+# Environment files
+*.env
+.env*
+
+# TLS/SSL certificates
+*.pem
+*.key
+*.crt
+*.p12
+*.jks
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db

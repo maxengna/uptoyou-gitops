@@ -1,0 +1,79 @@
+# PostgreSQL values for EKS deployment
+global:
+  storageClass: "gp2"
+  postgresql:
+    auth:
+      postgresPassword: "change-me-in-production"
+      username: "postgres"
+      password: "change-me-in-production"
+      database: "uptoyoushop"
+
+primary:
+  name: postgres-primary
+  size: 1
+  persistence:
+    enabled: true
+    storageClass: "gp2"
+    size: 20Gi
+    accessModes:
+      - ReadWriteOnce
+  
+  resources:
+    requests:
+      cpu: 250m
+      memory: 256Mi
+    limits:
+      cpu: 500m
+      memory: 512Mi
+  
+  extraEnvVars:
+    - name: PGDATA
+      value: /var/lib/postgresql/data/pgdata
+
+readReplicas:
+  name: postgres-replica
+  replicaCount: 1
+  size: 1
+  
+  persistence:
+    enabled: true
+    storageClass: "gp2"
+    size: 20Gi
+    accessModes:
+      - ReadWriteOnce
+  
+  resources:
+    requests:
+      cpu: 250m
+      memory: 256Mi
+    limits:
+      cpu: 500m
+      memory: 512Mi
+
+metrics:
+  enabled: true
+  serviceMonitor:
+    enabled: true
+    namespace: uptoyoushop
+
+backup:
+  enabled: true
+  schedule: "0 2 * * *"  # Daily at 2 AM
+  retention: "7d"
+
+service:
+  type: ClusterIP
+  port: 5432
+  
+networkPolicy:
+  enabled: true
+
+# EKS specific configurations
+rbac:
+  create: true
+
+serviceAccount:
+  create: true
+  name: postgres
+  annotations:
+    "eks.amazonaws.com/role-arn": "arn:aws:iam::ACCOUNT:role/postgres-role"

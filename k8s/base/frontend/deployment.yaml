@@ -2,16 +2,19 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: frontend-app
-  namespace: uptoyoushop
+  labels:
+    app: uptoyoushop
+  tier: frontend
+  # namespace: frontend-app
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: frontend-app
+      app: uptoyoushop
   template:
     metadata:
       labels:
-        app: frontend-app
+        app: uptoyoushop
     spec:
       containers:
         - name: frontend-app

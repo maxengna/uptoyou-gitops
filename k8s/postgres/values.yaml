@@ -1,23 +1,23 @@
 # PostgreSQL values for EKS deployment
 global:
-  storageClass: "gp2"
+  storageClass: "gp3" #ต้องติดตั้ง EBS CSI Driver บน EKS ก่อน ไม่งั้น gp3 ใช้ไม่ได้
   postgresql:
     auth:
-      postgresPassword: "change-me-in-production"
+      postgresPassword: "1234"
       username: "postgres"
-      password: "change-me-in-production"
+      password: "1234"
       database: "uptoyoushop"
 
 primary:
   name: postgres-primary
-  size: 1
+  size: 2
   persistence:
     enabled: true
-    storageClass: "gp2"
+    storageClass: "gp3"
     size: 20Gi
     accessModes:
       - ReadWriteOnce
-  
+
   resources:
     requests:
       cpu: 250m
@@ -25,23 +25,23 @@ primary:
     limits:
       cpu: 500m
       memory: 512Mi
-  
+
   extraEnvVars:
     - name: PGDATA
       value: /var/lib/postgresql/data/pgdata
 
 readReplicas:
   name: postgres-replica
-  replicaCount: 1
-  size: 1
-  
+  replicaCount: 2
+  size: 2
+
   persistence:
     enabled: true
-    storageClass: "gp2"
+    storageClass: "gp3"
     size: 20Gi
     accessModes:
       - ReadWriteOnce
-  
+
   resources:
     requests:
       cpu: 250m
@@ -51,20 +51,22 @@ readReplicas:
       memory: 512Mi
 
 metrics:
-  enabled: true
+  # Disable Prometheus metrics for now
+  enabled: false
   serviceMonitor:
-    enabled: true
+    enabled: false
     namespace: uptoyoushop
 
-backup:
-  enabled: true
-  schedule: "0 2 * * *"  # Daily at 2 AM
-  retention: "7d"
+# backup:
+#   enabled: true
+#   schedule: "0 2 * * *" # Daily at 2 AM
+#   retention: "7d"
 
+# Service configuration
 service:
   type: ClusterIP
   port: 5432
-  
+
 networkPolicy:
   enabled: true
 

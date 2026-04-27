@@ -5,7 +5,7 @@ metadata:
   labels:
     app: uptoyoushop
   tier: frontend
-  # namespace: frontend-app
+  namespace: uptoyoushop
 spec:
   replicas: 1
   selector:
@@ -23,6 +23,18 @@ spec:
             - name: http
               containerPort: 3000
               protocol: TCP
+          livenessProbe:
+            httpGet:
+              path: /
+              port: 3000
+            initialDelaySeconds: 30
+            periodSeconds: 10
+          readinessProbe:
+            httpGet:
+              path: /
+              port: 3000
+            initialDelaySeconds: 5
+            periodSeconds: 5
           resources:
             requests:
               cpu: 100m

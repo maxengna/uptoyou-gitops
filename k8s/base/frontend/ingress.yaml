@@ -4,18 +4,18 @@ metadata:
   name: uptoyoushop-ingress
   labels:
     app: uptoyoushop
-  # namespace: uptoyoushop
-  annotations:
-    kubernetes.io/ingress.class: alb # AWS ALB Ingress Controller
+  namespace: uptoyoushop
+  annotations: # kubernetes.io/ingress.class: alb # AWS ALB Ingress Controller
 spec:
   rules:
-    - host: frontend.uptoyou.shop
-      http:
-        paths:
-          - path: /
-            pathType: Prefix
-            backend:
-              service:
-                name: frontend-app
-                port:
-                  number: 80
+    # - host: frontend.uptoyou.shop
+    http:
+      paths:
+        - path: /
+          pathType: Prefix
+          backend:
+            service:
+              name: frontend-app
+              port:
+                number: 80
+  ingressClassName: alb

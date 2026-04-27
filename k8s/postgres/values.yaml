@@ -3,7 +3,7 @@ global:
   storageClass: "gp3" #ต้องติดตั้ง EBS CSI Driver บน EKS ก่อน ไม่งั้น gp3 ใช้ไม่ได้
   postgresql:
     auth:
-      postgresPassword: "YOUR_POSTGRES_PASSWORD_HERE"
+      # postgresPassword: "YOUR_POSTGRES_PASSWORD_HERE"
       username: "postgres"
       password: "YOUR_POSTGRES_PASSWORD_HERE"
       database: "uptoyoushop"

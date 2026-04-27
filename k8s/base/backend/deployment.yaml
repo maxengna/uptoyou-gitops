@@ -3,15 +3,18 @@ kind: Deployment
 metadata:
   name: backend-app
   namespace: uptoyoushop
+  labels:
+    app: uptoyoushop
+  tier: backend
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: backend-app
+      app: uptoyoushop
   template:
     metadata:
       labels:
-        app: backend-app
+        app: uptoyoushop
     spec:
       containers:
         - name: backend-app
@@ -20,6 +23,20 @@ spec:
             - name: http
               containerPort: 8080
               protocol: TCP
+          env:
+            - name: DB_HOST
+              value: "postgres-primary.uptoyoushop.svc.cluster.local"
+            - name: DB_PORT
+              value: "5432"
+            # - name: DB_NAME
+            #   value: "uptoyoushop"
+            # - name: DB_USER
+            #   value: "uptoyoushop"
+            - name: DB_PASSWORD
+              # valueFrom:   # USE SEALED SECRET IN PRODUCTION
+              #   secretKeyRef:
+              #     name: postgres-secret
+              #     key: password
           resources:
             requests:
               cpu: 200m

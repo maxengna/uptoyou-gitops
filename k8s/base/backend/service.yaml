@@ -5,7 +5,7 @@ metadata:
   namespace: uptoyoushop
 spec:
   selector:
-    app: backend-app
+    app: uptoyoushop
   ports:
     - name: http
       port: 80

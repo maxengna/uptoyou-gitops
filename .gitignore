@@ -20,7 +20,16 @@ plan.out
 # Helm sensitive values
 **/values-prod.yaml
 **/values-staging.yaml
+**/values-dev.yaml
+**/values-local.yaml
 **/secrets.yaml
+
+# Helm generated
+**/Chart.lock
+**/charts/
+
+# Terraform backend
+backend.tf
 
 # Kubernetes secrets
 **/secret*.yaml

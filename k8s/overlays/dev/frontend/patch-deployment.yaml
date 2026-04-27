@@ -1,0 +1,21 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: frontend-app
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: uptoyoushop
+  template:
+    metadata:
+      labels:
+        app: uptoyoushop
+    spec:
+      containers:
+        - name: frontend-app
+          env:
+            - name: NODE_ENV
+              value: "development"
+            - name: NEXT_PUBLIC_API_URL
+              value: "http://backend-app.uptoyoushop.svc.cluster.local"

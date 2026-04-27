@@ -1,0 +1,23 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: backend-app
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: uptoyoushop
+  template:
+    metadata:
+      labels:
+        app: uptoyoushop
+    spec:
+      containers:
+        - name: backend-app
+          env:
+            - name: NODE_ENV
+              value: "development"
+            - name: DB_HOST
+              value: "postgres-primary.uptoyoushop.svc.cluster.local"
+            - name: DB_PORT
+              value: "5432"

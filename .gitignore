@@ -60,3 +60,7 @@ Thumbs.db
 # Secrets - ไม่ commit secret ต้นฉบับ
 k8s/base/secrets/*secret.yaml
 !k8s/base/secrets/*sealedsecret.yaml
+
+
+# Terraform plan result
+plan-result.txt

@@ -3,9 +3,9 @@ global:
   storageClass: "gp3" #ต้องติดตั้ง EBS CSI Driver บน EKS ก่อน ไม่งั้น gp3 ใช้ไม่ได้
   postgresql:
     auth:
-      # postgresPassword: "YOUR_POSTGRES_PASSWORD_HERE"
+      existingSecret: postgres-secret
+      existingSecretPasswordKey: POSTGRES_PASSWORD
       username: "postgres"
-      password: "YOUR_POSTGRES_PASSWORD_HERE"
       database: "uptoyoushop"
 
 primary:
@@ -33,7 +33,7 @@ primary:
 readReplicas:
   name: postgres-replica
   replicaCount: 3
-  size: 2
+  size: 3
 
   persistence:
     enabled: true
@@ -77,5 +77,5 @@ rbac:
 serviceAccount:
   create: true
   name: postgres
-  annotations:
-    "eks.amazonaws.com/role-arn": "arn:aws:iam::ACCOUNT:role/postgres-role"
+  # annotations:
+  #   "eks.amazonaws.com/role-arn": "arn:aws:iam::ACCOUNT:role/postgres-role"

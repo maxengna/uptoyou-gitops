@@ -32,11 +32,11 @@ spec:
             #   value: "uptoyoushop"
             # - name: DB_USER
             #   value: "uptoyoushop"
-            - name: DB_PASSWORD
-              # valueFrom:   # USE SEALED SECRET IN PRODUCTION
-              #   secretKeyRef:
-              #     name: postgres-secret
-              #     key: password
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: postgres-secret
+                  key: POSTGRES_PASSWORD
           resources:
             requests:
               cpu: 200m

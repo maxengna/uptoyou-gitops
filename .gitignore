@@ -55,3 +55,8 @@ backend.tf
 # OS
 .DS_Store
 Thumbs.db
+
+
+# Secrets - ไม่ commit secret ต้นฉบับ
+k8s/base/secrets/*secret.yaml
+!k8s/base/secrets/*sealedsecret.yaml

@@ -66,16 +66,10 @@ module "eks" {
 }
 
 #################################################################
-# OIDC Provider for IRSA
+# OIDC Provider - ใช้ที่ EKS module สร้างให้แล้ว
 #################################################################
-data "tls_certificate" "eks" {
-  url = module.eks.cluster_oidc_issuer_url
-}
-
-resource "aws_iam_openid_connect_provider" "eks" {
-  url             = module.eks.cluster_oidc_issuer_url
-  client_id_list  = ["sts.amazonaws.com"]
-  thumbprint_list = [data.tls_certificate.eks.certificates[0].sha1_fingerprint]
+data "aws_iam_openid_connect_provider" "eks" {
+  arn = module.eks.oidc_provider_arn
 }
 
 #################################################################
@@ -86,7 +80,7 @@ data "aws_iam_policy_document" "ebs_csi_assume_role" {
     actions = ["sts:AssumeRoleWithWebIdentity"]
     principals {
       type        = "Federated"
-      identifiers = [aws_iam_openid_connect_provider.eks.arn]
+      identifiers = [data.aws_iam_openid_connect_provider.eks.arn]
     }
     condition {
       test     = "StringEquals"
@@ -123,7 +117,7 @@ data "aws_iam_policy_document" "lb_controller_assume_role" {
     actions = ["sts:AssumeRoleWithWebIdentity"]
     principals {
       type        = "Federated"
-      identifiers = [aws_iam_openid_connect_provider.eks.arn]
+      identifiers = [data.aws_iam_openid_connect_provider.eks.arn]
     }
     condition {
       test     = "StringEquals"

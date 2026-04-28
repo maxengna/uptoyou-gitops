@@ -4,7 +4,7 @@ metadata:
   name: frontend-app
   labels:
     app: uptoyoushop
-  tier: frontend
+    tier: frontend
   namespace: uptoyoushop
 spec:
   replicas: 1

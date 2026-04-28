@@ -5,7 +5,7 @@ metadata:
   namespace: uptoyoushop
   labels:
     app: uptoyoushop
-  tier: backend
+    tier: backend
 spec:
   replicas: 1
   selector:

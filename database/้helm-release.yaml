@@ -1,0 +1,21 @@
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: postgres
+  namespace: uptoyoushop
+spec:
+  interval: 5m # ตรวจสอบทุก 5 นาที
+  chart:
+    spec:
+      chart: postgresql # chart ชื่ออะไร
+      version: "12.12.0" # เวอร์ชันไหน
+      sourceRef:
+        kind: HelmRepository
+        name: bitnami # ดึงจาก repo ไหน
+      interval: 1m
+  values:
+    # แทนที่จะใช้ values.yaml แยก
+    global:
+      storageClass: gp3
+    auth:
+      existingSecret: postgres-secret

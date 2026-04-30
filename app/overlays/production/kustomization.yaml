@@ -9,4 +9,4 @@ patches:
   - path: backend-patch.yaml
 
 commonLabels:
-  env: dev
+  env: production

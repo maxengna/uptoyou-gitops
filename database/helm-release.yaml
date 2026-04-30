@@ -1,0 +1,82 @@
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: postgres
+  namespace: uptoyoushop
+spec:
+  interval: 5m # ตรวจสอบทุก 5 นาที
+  chart:
+    spec:
+      chart: postgresql # chart ชื่ออะไร
+      version: "12.12.0" # เวอร์ชันไหน
+      sourceRef:
+        kind: HelmRepository
+        name: bitnami # ดึงจาก repo ไหน
+      interval: 1m
+  values:
+    global:
+      storageClass: gp3
+      postgresql:
+        auth:
+          existingSecret: postgres-secret
+          existingSecretPasswordKey: POSTGRES_PASSWORD
+          username: "postgres"
+          database: "uptoyoushop"
+
+    primary:
+      name: postgres-primary
+      size: 2
+      persistence:
+        enabled: true
+        storageClass: gp3
+        size: 20Gi
+        accessModes:
+          - ReadWriteOnce
+      resources:
+        requests:
+          cpu: 250m
+          memory: 256Mi
+        limits:
+          cpu: 500m
+          memory: 512Mi
+      extraEnvVars:
+        - name: PGDATA
+          value: /var/lib/postgresql/data/pgdata
+
+    readReplicas:
+      name: postgres-replica
+      replicaCount: 0
+      size: 2
+      persistence:
+        enabled: true
+        storageClass: gp3
+        size: 20Gi
+        accessModes:
+          - ReadWriteOnce
+      resources:
+        requests:
+          cpu: 250m
+          memory: 256Mi
+        limits:
+          cpu: 500m
+          memory: 512Mi
+
+    metrics:
+      enabled: false
+      serviceMonitor:
+        enabled: false
+        namespace: uptoyoushop
+
+    service:
+      type: ClusterIP
+      port: 5432
+
+    networkPolicy:
+      enabled: true
+
+    rbac:
+      create: true
+
+    serviceAccount:
+      create: true
+      name: postgres

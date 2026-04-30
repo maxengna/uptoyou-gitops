@@ -23,15 +23,27 @@ spec:
             - name: http
               containerPort: 8080
               protocol: TCP
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 8080
+            initialDelaySeconds: 30
+            periodSeconds: 10
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: 8080
+            initialDelaySeconds: 5
+            periodSeconds: 5
           env:
             - name: DB_HOST
               value: "postgres-primary.uptoyoushop.svc.cluster.local"
             - name: DB_PORT
               value: "5432"
-            # - name: DB_NAME
-            #   value: "uptoyoushop"
-            # - name: DB_USER
-            #   value: "uptoyoushop"
+            - name: DB_NAME
+              value: "uptoyoushop"
+            - name: DB_USER
+              value: "postgres"
             - name: POSTGRES_PASSWORD
               valueFrom:
                 secretKeyRef:

@@ -31,10 +31,6 @@ plan.out
 # Terraform backend
 backend.tf
 
-# Kubernetes secrets
-**/secret*.yaml
-**/secret*.yml
-
 # Environment files
 *.env
 .env*
@@ -57,10 +53,9 @@ backend.tf
 Thumbs.db
 
 
-# Secrets - ไม่ commit secret ต้นฉบับ
-k8s/base/secrets/*secret.yaml
-!k8s/base/secrets/*sealedsecret.yaml
+app/base/secrets/*secret.yaml
+!app/base/secrets/*sealedsecret.yaml
 
 
 # Terraform plan result
-plan-result.txt
+terraform/plan*

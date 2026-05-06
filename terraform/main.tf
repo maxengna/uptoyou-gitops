@@ -195,7 +195,7 @@ resource "aws_eks_addon" "ebs_csi_driver" {
 
   tags = {
     Name        = "${var.cluster_name}-ebs-csi-driver"
-    Environment = "dev"
+    Environment = "production"
     Terraform   = "true"
   }
 }

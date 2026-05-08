@@ -37,7 +37,7 @@ module "eks" {
   version = "~> 20.0"
 
   cluster_name    = var.cluster_name
-  cluster_version = "1.29"
+  cluster_version = "1.31"
 
   vpc_id     = module.vpc.vpc_id
   subnet_ids = module.vpc.public_subnets
@@ -202,17 +202,17 @@ resource "aws_eks_addon" "ebs_csi_driver" {
 
 # CoreDNS Addon
 resource "aws_eks_addon" "coredns" {
-  cluster_name                = module.eks.cluster_name
-  addon_name                  = "coredns"
-  addon_version               = "v1.10.1-eksbuild.1"
+  cluster_name = module.eks.cluster_name
+  addon_name   = "coredns"
+  # addon_version               = "v1.10.1-eksbuild.1"
   resolve_conflicts_on_update = "PRESERVE"
 }
 
 # AWS Load Balancer Controller Addon
 resource "aws_eks_addon" "aws_load_balancer_controller" {
-  cluster_name                = module.eks.cluster_name
-  addon_name                  = "aws-load-balancer-controller"
-  addon_version               = "v2.9.1-eksbuild.1"
+  cluster_name = module.eks.cluster_name
+  addon_name   = "aws-load-balancer-controller"
+  # addon_version               = "v2.9.1-eksbuild.1"
   resolve_conflicts_on_update = "PRESERVE"
   service_account_role_arn    = aws_iam_role.lb_controller_role.arn
 

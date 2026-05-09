@@ -39,6 +39,8 @@ module "eks" {
   cluster_name    = var.cluster_name
   cluster_version = "1.31"
 
+  cluster_endpoint_public_access = true
+
   vpc_id     = module.vpc.vpc_id
   subnet_ids = module.vpc.public_subnets
 
@@ -187,9 +189,10 @@ resource "aws_iam_role_policy_attachment" "lb_controller_policy_attach" {
 
 # EBS CSI Driver Addon
 resource "aws_eks_addon" "ebs_csi_driver" {
-  cluster_name             = module.eks.cluster_name
-  addon_name               = "aws-ebs-csi-driver"
-  service_account_role_arn = aws_iam_role.ebs_csi_role.arn
+  cluster_name                = module.eks.cluster_name
+  addon_name                  = "aws-ebs-csi-driver"
+  service_account_role_arn    = aws_iam_role.ebs_csi_role.arn
+  resolve_conflicts_on_update = "OVERWRITE"
 
   depends_on = [aws_iam_role_policy_attachment.ebs_csi_policy_attach]
 
@@ -213,7 +216,7 @@ resource "aws_eks_addon" "aws_load_balancer_controller" {
   cluster_name = module.eks.cluster_name
   addon_name   = "aws-load-balancer-controller"
   # addon_version               = "v2.9.1-eksbuild.1"
-  resolve_conflicts_on_update = "PRESERVE"
+  resolve_conflicts_on_update = "OVERWRITE"
   service_account_role_arn    = aws_iam_role.lb_controller_role.arn
 
   depends_on = [aws_iam_role_policy_attachment.lb_controller_policy_attach]

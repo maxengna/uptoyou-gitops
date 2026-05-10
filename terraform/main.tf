@@ -39,6 +39,12 @@ module "eks" {
   cluster_name    = var.cluster_name
   cluster_version = "1.31"
 
+  # 🔥 บรรทัดที่ 1: ให้คนรัน Terraform รอบนี้มีสิทธิ์ Admin ทันที
+  enable_cluster_creator_admin_permissions = true
+
+  # 🔥 บรรทัดที่ 2: ตั้งค่าโหมดการจัดการสิทธิ์ให้ทันสมัย (สำหรับ 1.31)
+  authentication_mode = "API_AND_CONFIG_MAP"
+
   cluster_endpoint_public_access = true
 
   vpc_id     = module.vpc.vpc_id
@@ -86,8 +92,9 @@ data "aws_iam_policy_document" "ebs_csi_assume_role" {
     }
     condition {
       test     = "StringEquals"
-      variable = "${module.eks.cluster_oidc_issuer_url}:sub"
-      values   = ["system:serviceaccount:kube-system:ebs-csi-controller-sa"]
+      variable = "${replace(module.eks.cluster_oidc_issuer_url, "https://", "")}:sub"
+      # variable = "${module.eks.cluster_oidc_issuer_url}:sub"
+      values = ["system:serviceaccount:kube-system:ebs-csi-controller-sa"]
     }
   }
 }
@@ -212,12 +219,12 @@ resource "aws_eks_addon" "coredns" {
 }
 
 # AWS Load Balancer Controller Addon
-resource "aws_eks_addon" "aws_load_balancer_controller" {
-  cluster_name = module.eks.cluster_name
-  addon_name   = "aws-load-balancer-controller"
-  # addon_version               = "v2.9.1-eksbuild.1"
-  resolve_conflicts_on_update = "OVERWRITE"
-  service_account_role_arn    = aws_iam_role.lb_controller_role.arn
+# resource "aws_eks_addon" "aws_load_balancer_controller" {
+#   cluster_name = module.eks.cluster_name
+#   addon_name   = "aws-load-balancer-controller"
+#   # addon_version               = "v2.9.1-eksbuild.1"
+#   resolve_conflicts_on_update = "OVERWRITE"
+#   service_account_role_arn    = aws_iam_role.lb_controller_role.arn
 
-  depends_on = [aws_iam_role_policy_attachment.lb_controller_policy_attach]
-}
+#   depends_on = [aws_iam_role_policy_attachment.lb_controller_policy_attach]
+# }

@@ -2,10 +2,10 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: backend-app
-  namespace: uptoyoushop
   labels:
     app: uptoyoushop
     tier: backend
+  namespace: uptoyoushop
 spec:
   replicas: 1
   selector:

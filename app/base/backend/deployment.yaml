@@ -46,6 +46,8 @@ spec:
               value: "postgres"
             - name: JWT_SECRET
               value: "b72a6fb9515a62b0de7b12b3c886b5054e7da052da5f3100bc9199a0cf408ece"
+            - name: DATABASE_URL
+              value: "postgresql://postgres:$(POSTGRES_PASSWORD)@postgres-postgresql:5432/uptoyoushop"
             - name: POSTGRES_PASSWORD
               valueFrom:
                 secretKeyRef:

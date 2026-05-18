@@ -8,7 +8,7 @@ spec:
   chart:
     spec:
       chart: postgresql # chart ชื่ออะไร
-      version: "18.*" # เวอร์ชันไหน
+      version: "15.*" # เวอร์ชันไหน
       sourceRef:
         kind: HelmRepository
         name: bitnami # ดึงจาก repo ไหน

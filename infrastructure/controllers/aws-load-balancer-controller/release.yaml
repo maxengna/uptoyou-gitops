@@ -19,10 +19,10 @@ spec:
   values:
     clusterName: "uptoyou-eks-cluster"
     region: "ap-southeast-1"
-    vpcId: "vpc-xxxxxxxxxxxx" # ID ของ VPC (ดูได้จาก terraform output)
+    vpcId: "vpc-0118bfe667f653ead" # ID ของ VPC (ดูได้จาก terraform output)
     serviceAccount:
       create: true
       name: aws-load-balancer-controller
       annotations:
         # 🔥 สำคัญ: ใส่ ARN ของ IAM Role ที่สร้างจาก Terraform
-        eks.amazonaws.com/role-arn: "arn:aws:iam::[ACCOUNT_ID]:role/uptoyou-eks-cluster-lb-controller-role"
+        eks.amazonaws.com/role-arn: "arn:aws:iam::575108951885:role/uptoyou-eks-cluster-aws-load-balancer-controller-role"

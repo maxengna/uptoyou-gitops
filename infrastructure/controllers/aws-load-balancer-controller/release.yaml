@@ -2,27 +2,34 @@ apiVersion: helm.toolkit.fluxcd.io/v2
 kind: HelmRelease
 metadata:
   name: aws-load-balancer-controller
-  namespace: uptoyoushop
+  namespace: flux-system
 spec:
   interval: 15m
   chart:
     spec:
       chart: aws-load-balancer-controller
-      version: ">=1.7.0"
+      version: "1.7.x"
       sourceRef:
         kind: HelmRepository
         name: eks-charts
-        namespace: uptoyoushop
+        namespace: flux-system
       interval: 1h
   install:
     createNamespace: true
   values:
     clusterName: "uptoyou-eks-cluster"
     region: "ap-southeast-1"
-    vpcId: "vpc-0118bfe667f653ead" # ID ของ VPC (ดูได้จาก terraform output)
+    vpcId: ${vpc_Id} # injected from terraform output
     serviceAccount:
       create: true
       name: aws-load-balancer-controller
       annotations:
         # 🔥 สำคัญ: ใส่ ARN ของ IAM Role ที่สร้างจาก Terraform
-        eks.amazonaws.com/role-arn: "arn:aws:iam::575108951885:role/uptoyou-eks-cluster-aws-load-balancer-controller-role"
+        eks.amazonaws.com/role-arn: ${alb_role_arn} # injected from terraform output
+    resources:
+      requests:
+        cpu: 100m
+        memory: 128Mi
+      limits:
+        cpu: 200m
+        memory: 256Mi

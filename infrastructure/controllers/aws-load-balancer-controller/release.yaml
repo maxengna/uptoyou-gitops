@@ -19,13 +19,13 @@ spec:
   values:
     clusterName: "uptoyou-eks-cluster"
     region: "ap-southeast-1"
-    vpcId: ${vpc_Id} # injected from terraform output
+    vpcId: ${VPC_ID} # injected from terraform output
     serviceAccount:
       create: true
       name: aws-load-balancer-controller
       annotations:
         # 🔥 สำคัญ: ใส่ ARN ของ IAM Role ที่สร้างจาก Terraform
-        eks.amazonaws.com/role-arn: ${alb_role_arn} # injected from terraform output
+        eks.amazonaws.com/role-arn: ${ALB_ROLE_ARN} # injected from terraform output
     resources:
       requests:
         cpu: 100m

@@ -12,7 +12,7 @@ spec:
       sourceRef:
         kind: HelmRepository
         name: runix # ต้องเพิ่ม repository นี้ด้วย
-        namespace: flux-system
+        namespace: uptoyoushop
       interval: 1m
   values:
     env:

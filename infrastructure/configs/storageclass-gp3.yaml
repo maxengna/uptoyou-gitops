@@ -1,0 +1,11 @@
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+  name: gp3
+provisioner: ebs.csi.aws.com       # ใช้ EBS CSI Driver
+parameters:
+  type: gp3                         # EBS volume type gp3
+  fsType: ext4
+volumeBindingMode: WaitForFirstConsumer  # สร้าง volume ใน AZ เดียวกับ pod
+reclaimPolicy: Retain
+allowVolumeExpansion: true

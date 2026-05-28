@@ -4,7 +4,6 @@ metadata:
   name: aws-load-balancer-controller
   namespace: flux-system
 spec:
-  targetNamespace: kube-system
   interval: 15m
   chart:
     spec:
@@ -20,7 +19,7 @@ spec:
   values:
     clusterName: "uptoyou-eks-cluster"
     region: "ap-southeast-1"
-    vpcId: "vpc-0f3d67986568b926a"
+    vpcId: "vpc-03cd0304e72781027"
     serviceAccount:
       create: true
       name: aws-load-balancer-controller

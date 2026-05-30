@@ -18,6 +18,10 @@ spec:
     env:
       email: "admin@uptoyou.shop"
       password: "1234" # แนะนำให้ใช้ SealedSecret ในภายหลัง
+    persistentVolume:
+      enabled: true
+      storageClass: gp3
+      size: 1Gi
     service:
       type: ClusterIP
     ingress:

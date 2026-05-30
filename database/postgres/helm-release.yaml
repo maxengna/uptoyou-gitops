@@ -18,14 +18,14 @@ spec:
       registry: docker.io
       repository: bitnamilegacy/postgresql
       tag: 16.4.0-debian-12-r14
+    auth:
+      existingSecret: postgres-secret
+      secretKeys:
+        adminPasswordKey: POSTGRES_PASSWORD
+      username: "postgres"
+      database: "uptoyoushop"
     global:
       storageClass: gp3
-      postgresql:
-        auth:
-          existingSecret: postgres-secret
-          existingSecretPasswordKey: POSTGRES_PASSWORD
-          username: "postgres"
-          database: "uptoyoushop"
 
     primary:
       name: postgres-primary

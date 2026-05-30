@@ -14,6 +14,10 @@ spec:
         name: bitnami # ดึงจาก repo ไหน
       interval: 1m
   values:
+    image:
+      registry: docker.io
+      repository: bitnami/postgresql
+      tag: latest
     global:
       storageClass: gp3
       postgresql:

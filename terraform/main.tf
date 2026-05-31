@@ -69,7 +69,7 @@ module "eks" {
   }
 
   tags = {
-    Environment = "dev"
+    Environment = "production"
   }
 }
 
@@ -142,7 +142,7 @@ resource "aws_iam_role" "lb_controller_role" {
 
   tags = {
     Name        = "${var.cluster_name}-aws-load-balancer-controller-role"
-    Environment = "dev"
+    Environment = "production"
   }
 }
 

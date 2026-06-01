@@ -26,6 +26,7 @@ module "vpc" {
 
   tags = {
     "kubernetes.io/cluster/${var.cluster_name}" = "shared"
+    Environment                                 = "production"
   }
 }
 
@@ -105,7 +106,7 @@ resource "aws_iam_role" "ebs_csi_role" {
 
   tags = {
     Name        = "${var.cluster_name}-ebs-csi-role"
-    Environment = "dev"
+    Environment = "production"
   }
 }
 

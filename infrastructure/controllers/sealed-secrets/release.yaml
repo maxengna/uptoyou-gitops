@@ -14,4 +14,7 @@ spec:
         name: sealed-secrets
         namespace: flux-system
       interval: 1m
+  dependsOn:
+    - helmrelease/aws-load-balancer-controller
   values:
+

@@ -36,6 +36,11 @@ spec:
             initialDelaySeconds: 5
             periodSeconds: 5
           env:
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: postgres-secret
+                  key: POSTGRES_PASSWORD
             - name: DB_HOST
               value: "postgres-primary.uptoyoushop.svc.cluster.local"
             - name: DB_PORT
@@ -47,12 +52,7 @@ spec:
             - name: JWT_SECRET
               value: "b72a6fb9515a62b0de7b12b3c886b5054e7da052da5f3100bc9199a0cf408ece"
             - name: DATABASE_URL
-              value: "postgresql://postgres:$(POSTGRES_PASSWORD)@postgres-postgresql:5432/uptoyoushop"
-            - name: POSTGRES_PASSWORD
-              valueFrom:
-                secretKeyRef:
-                  name: postgres-secret
-                  key: POSTGRES_PASSWORD
+              value: "postgresql://postgres:$(POSTGRES_PASSWORD)@postgres-primary.uptoyoushop.svc.cluster.local:5432/uptoyoushop"
           resources:
             requests:
               cpu: 200m

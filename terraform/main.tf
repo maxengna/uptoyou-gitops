@@ -130,8 +130,9 @@ data "aws_iam_policy_document" "lb_controller_assume_role" {
       identifiers = [data.aws_iam_openid_connect_provider.eks.arn]
     }
     condition {
-      test     = "StringEquals"
-      variable = "${module.eks.cluster_oidc_issuer_url}:sub"
+      test = "StringEquals"
+      # variable = "${module.eks.cluster_oidc_issuer_url}:sub"
+      variable = "${replace(module.eks.cluster_oidc_issuer_url, "https://", "")}:sub"
       values   = ["system:serviceaccount:kube-system:aws-load-balancer-controller"]
     }
   }

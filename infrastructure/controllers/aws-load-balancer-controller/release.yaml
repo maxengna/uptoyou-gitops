@@ -16,11 +16,11 @@ spec:
       interval: 1h
   install:
     createNamespace: true
-  targetNamespace: kube-system 
+  targetNamespace: kube-system #
   values:
     clusterName: "uptoyou-eks-cluster"
     region: "ap-southeast-1"
-    vpcId: "vpc-03b17a05cb55344b8"
+    vpcId: "vpc-055cefa60b7a42639"
     serviceAccount:
       create: true
       name: aws-load-balancer-controller

@@ -24,6 +24,10 @@ module "vpc" {
 
   map_public_ip_on_launch = true # Auto-assign public IP to EC2 instances in public subnets
 
+  public_subnet_tags = {
+    "kubernetes.io/role/elb" = "1"
+  }
+
   tags = {
     "kubernetes.io/cluster/${var.cluster_name}" = "shared"
     Environment                                 = "production"

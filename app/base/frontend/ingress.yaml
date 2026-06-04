@@ -2,10 +2,14 @@ apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   name: uptoyoushop-ingress
+  namespace: uptoyoushop
   labels:
     app: uptoyoushop
-  namespace: uptoyoushop
+  annotations:
+    alb.ingress.kubernetes.io/scheme: internet-facing
+    alb.ingress.kubernetes.io/target-type: ip
 spec:
+  ingressClassName: alb
   rules:
     - http:
         paths:
@@ -16,4 +20,4 @@ spec:
                 name: frontend-app
                 port:
                   number: 80
-  ingressClassName: alb
+  

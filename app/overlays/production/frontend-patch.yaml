@@ -22,4 +22,5 @@ spec:
             - name: NODE_ENV
               value: "production"
             - name: NEXT_PUBLIC_API_URL
-              value: "http://backend-app.uptoyoushop.svc.cluster.local"
+              value: "/api"
+              # value: "http://uptoyou.shop/api"

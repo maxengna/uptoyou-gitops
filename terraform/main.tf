@@ -71,11 +71,16 @@ module "eks" {
         role = "public-node"
       }
     }
+
   }
 
   tags = {
     Environment = "production"
   }
+
+  # ปิดการสร้าง CloudWatch Log Group เพื่อไม่ให้สร้างซ้ำซ้อน
+  create_cloudwatch_log_group = false
+
 }
 
 #################################################################

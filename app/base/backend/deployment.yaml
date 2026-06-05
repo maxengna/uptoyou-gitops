@@ -18,7 +18,7 @@ spec:
     spec:
       containers:
         - name: backend-app
-          image: 575108951885.dkr.ecr.ap-southeast-1.amazonaws.com/uptoyoushop-backend:44c624a
+          image: 575108951885.dkr.ecr.ap-southeast-1.amazonaws.com/uptoyoushop-backend:1211214
           ports:
             - name: http
               containerPort: 5000

@@ -21,18 +21,18 @@ spec:
           image: 575108951885.dkr.ecr.ap-southeast-1.amazonaws.com/uptoyoushop-backend:44c624a
           ports:
             - name: http
-              containerPort: 8080
+              containerPort: 5000
               protocol: TCP
           livenessProbe:
             httpGet:
               path: /health
-              port: 8080
+              port: 5000
             initialDelaySeconds: 30
             periodSeconds: 10
           readinessProbe:
             httpGet:
               path: /health
-              port: 8080
+              port: 5000
             initialDelaySeconds: 5
             periodSeconds: 5
           env:

@@ -5,3 +5,4 @@ resources:
   - infrastructure.yaml # namespace / sealed-secrets / aws-load-balancer-controller
   - database.yaml # PostgreSQL
   - app.yaml # Applications
+  - capacitor/capacitor.yaml # capacitor UI

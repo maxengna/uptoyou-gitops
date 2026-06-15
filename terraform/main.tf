@@ -243,3 +243,93 @@ resource "aws_eks_addon" "coredns" {
 
 #   depends_on = [aws_iam_role_policy_attachment.lb_controller_policy_attach]
 # }
+
+#################################################################
+# S3 Bucket for Image Upload
+#################################################################
+resource "aws_s3_bucket" "image_bucket" {
+  bucket = "uptoyou-images-${data.aws_caller_identity.current.account_id}"
+  
+  tags = {
+    Name        = "UpToYou Images"
+    Environment = var.environment
+  }
+}
+
+resource "aws_s3_bucket_server_side_encryption_configuration" "image_bucket" {
+  bucket = aws_s3_bucket.image_bucket.id
+
+  rule {
+    apply_server_side_encryption_by_default {
+      sse_algorithm = "AES256"
+    }
+  }
+}
+
+resource "aws_s3_bucket_public_access_block" "image_bucket" {
+  bucket = aws_s3_bucket.image_bucket.id
+
+  block_public_acls       = true
+  block_public_policy     = true
+  ignore_public_acls      = true
+  restrict_public_buckets = true
+}
+
+#################################################################
+# IAM Role for App S3 Upload
+#################################################################
+resource "aws_iam_role" "app_s3_role" {
+  name = "${var.cluster_name}-app-s3-upload-role"
+
+  assume_role_policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Action = "sts:AssumeRoleWithWebIdentity"
+        Effect = "Allow"
+        Principal = {
+          Federated = data.aws_iam_openid_connect_provider.eks.arn
+        }
+        Condition = {
+          StringEquals = {
+            "${replace(module.eks.cluster_oidc_issuer_url, "https://", "")}:sub" = "system:serviceaccount:default:app-s3-sa"
+          }
+        }
+      }
+    ]
+  })
+
+  tags = {
+    Name        = "${var.cluster_name}-app-s3-upload-role"
+    Environment = var.environment
+  }
+}
+
+resource "aws_iam_policy" "app_s3_policy" {
+  name        = "${var.cluster_name}-app-s3-upload-policy"
+  description = "Policy for app to upload and read images from S3"
+
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Effect = "Allow"
+        Action = [
+          "s3:PutObject",
+          "s3:GetObject",
+          "s3:DeleteObject",
+          "s3:ListBucket"
+        ]
+        Resource = [
+          aws_s3_bucket.image_bucket.arn,
+          "${aws_s3_bucket.image_bucket.arn}/*"
+        ]
+      }
+    ]
+  })
+}
+
+resource "aws_iam_role_policy_attachment" "app_s3_policy_attach" {
+  role       = aws_iam_role.app_s3_role.name
+  policy_arn = aws_iam_policy.app_s3_policy.arn
+}

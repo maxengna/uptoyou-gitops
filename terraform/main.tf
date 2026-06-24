@@ -3,6 +3,11 @@ provider "aws" {
 }
 
 #################################################################
+# Get Current AWS Account ID
+#################################################################
+data "aws_caller_identity" "current" {}
+
+#################################################################
 # VPC (ใช้ module สำเร็จรูป)
 #################################################################
 module "vpc" {
@@ -245,19 +250,19 @@ resource "aws_eks_addon" "coredns" {
 # }
 
 #################################################################
-# S3 Bucket for Image Upload
+# S3 Buckets for Category and Product
 #################################################################
-resource "aws_s3_bucket" "image_bucket" {
-  bucket = "uptoyou-images-${data.aws_caller_identity.current.account_id}"
+resource "aws_s3_bucket" "category_bucket" {
+  bucket = "uptoyoushop-category-bucket-${data.aws_caller_identity.current.account_id}"
   
   tags = {
-    Name        = "UpToYou Images"
+    Name        = "UpToYouShop Category"
     Environment = var.environment
   }
 }
 
-resource "aws_s3_bucket_server_side_encryption_configuration" "image_bucket" {
-  bucket = aws_s3_bucket.image_bucket.id
+resource "aws_s3_bucket_server_side_encryption_configuration" "category_bucket" {
+  bucket = aws_s3_bucket.category_bucket.id
 
   rule {
     apply_server_side_encryption_by_default {
@@ -266,8 +271,36 @@ resource "aws_s3_bucket_server_side_encryption_configuration" "image_bucket" {
   }
 }
 
-resource "aws_s3_bucket_public_access_block" "image_bucket" {
-  bucket = aws_s3_bucket.image_bucket.id
+resource "aws_s3_bucket_public_access_block" "category_bucket" {
+  bucket = aws_s3_bucket.category_bucket.id
+
+  block_public_acls       = true
+  block_public_policy     = true
+  ignore_public_acls      = true
+  restrict_public_buckets = true
+}
+
+resource "aws_s3_bucket" "product_bucket" {
+  bucket = "uptoyoushop-product-bucket-${data.aws_caller_identity.current.account_id}"
+  
+  tags = {
+    Name        = "UpToYouShop Product"
+    Environment = var.environment
+  }
+}
+
+resource "aws_s3_bucket_server_side_encryption_configuration" "product_bucket" {
+  bucket = aws_s3_bucket.product_bucket.id
+
+  rule {
+    apply_server_side_encryption_by_default {
+      sse_algorithm = "AES256"
+    }
+  }
+}
+
+resource "aws_s3_bucket_public_access_block" "product_bucket" {
+  bucket = aws_s3_bucket.product_bucket.id
 
   block_public_acls       = true
   block_public_policy     = true
@@ -307,7 +340,7 @@ resource "aws_iam_role" "app_s3_role" {
 
 resource "aws_iam_policy" "app_s3_policy" {
   name        = "${var.cluster_name}-app-s3-upload-policy"
-  description = "Policy for app to upload and read images from S3"
+  description = "Policy for app to upload and read from category and product S3 buckets"
 
   policy = jsonencode({
     Version = "2012-10-17"
@@ -321,8 +354,10 @@ resource "aws_iam_policy" "app_s3_policy" {
           "s3:ListBucket"
         ]
         Resource = [
-          aws_s3_bucket.image_bucket.arn,
-          "${aws_s3_bucket.image_bucket.arn}/*"
+          aws_s3_bucket.category_bucket.arn,
+          "${aws_s3_bucket.category_bucket.arn}/*",
+          aws_s3_bucket.product_bucket.arn,
+          "${aws_s3_bucket.product_bucket.arn}/*"
         ]
       }
     ]
@@ -333,3 +368,83 @@ resource "aws_iam_role_policy_attachment" "app_s3_policy_attach" {
   role       = aws_iam_role.app_s3_role.name
   policy_arn = aws_iam_policy.app_s3_policy.arn
 }
+
+#################################################################
+# AWS SES Configuration with IRSA
+#################################################################
+
+# SES Domain Identity
+resource "aws_ses_domain_identity" "mail_domain" {
+  domain = var.ses_domain
+  
+  tags = {
+    Name        = "${var.cluster_name}-ses-domain"
+    Environment = var.environment
+  }
+}
+
+# SES Domain Identity Verification (DNS Record)
+resource "aws_ses_domain_dkim" "mail_domain" {
+  domain = aws_ses_domain_identity.mail_domain.domain
+}
+
+#################################################################
+# IAM Role for SES (IRSA)
+#################################################################
+data "aws_iam_policy_document" "ses_assume_role" {
+  statement {
+    actions = ["sts:AssumeRoleWithWebIdentity"]
+    principals {
+      type        = "Federated"
+      identifiers = [data.aws_iam_openid_connect_provider.eks.arn]
+    }
+    condition {
+      test     = "StringEquals"
+      variable = "${replace(module.eks.cluster_oidc_issuer_url, "https://", "")}:sub"
+      values   = ["system:serviceaccount:${var.ses_namespace}:${var.ses_service_account}"]
+    }
+  }
+}
+
+resource "aws_iam_role" "ses_role" {
+  name               = "${var.cluster_name}-ses-role"
+  assume_role_policy = data.aws_iam_policy_document.ses_assume_role.json
+
+  tags = {
+    Name        = "${var.cluster_name}-ses-role"
+    Environment = var.environment
+  }
+}
+
+#################################################################
+# IAM Policy for SES
+#################################################################
+resource "aws_iam_policy" "ses_policy" {
+  name        = "${var.cluster_name}-ses-policy"
+  description = "Policy for SES email sending"
+
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Effect = "Allow"
+        Action = [
+          "ses:SendEmail",
+          "ses:SendRawEmail",
+          "ses:GetSendQuota",
+          "ses:GetSendStatistics",
+          "ses:ListVerifiedEmailAddresses",
+          "ses:ListConfigurationSets",
+          "ses:GetConfigurationSetDeliveryOptions"
+        ]
+        Resource = "*"
+      }
+    ]
+  })
+}
+
+resource "aws_iam_role_policy_attachment" "ses_policy_attach" {
+  role       = aws_iam_role.ses_role.name
+  policy_arn = aws_iam_policy.ses_policy.arn
+}
+

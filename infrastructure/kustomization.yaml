@@ -3,4 +3,5 @@ kind: Kustomization
 resources:
   - controllers/aws-load-balancer-controller/
   - controllers/sealed-secrets/
+  - controllers/ses/
   - configs/

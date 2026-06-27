@@ -35,6 +35,9 @@ spec:
               port: 3000
             initialDelaySeconds: 5
             periodSeconds: 5
+          env:
+            - name: JWT_SECRET
+              value: "b72a6fb9515a62b0de7b12b3c886b5054e7da052da5f3100bc9199a0cf408ece"
           resources:
             requests:
               cpu: 100m

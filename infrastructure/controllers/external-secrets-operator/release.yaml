@@ -1,0 +1,23 @@
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: external-secrets
+  namespace: uptoyoushop
+spec:
+  interval: 1h
+  chart:
+    spec:
+      chart: external-secrets
+      version: ">=0.13.0"
+      sourceRef:
+        kind: HelmRepository
+        name: external-secrets
+        namespace: uptoyoushop
+  install:
+    createNamespace: true
+  values:
+    serviceAccount:
+      create: true
+      name: external-secrets
+      annotations:
+        eks.amazonaws.com/role-arn: arn:aws:iam::<ACCOUNT_ID>:role/${var.cluster_name}-external-secrets-role

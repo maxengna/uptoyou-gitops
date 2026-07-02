@@ -448,3 +448,66 @@ resource "aws_iam_role_policy_attachment" "ses_policy_attach" {
   policy_arn = aws_iam_policy.ses_policy.arn
 }
 
+
+
+#################################################################
+# IAM Role for Exter Secret Operator
+#################################################################
+data "aws_iam_openid_connect_provider" "eks" {
+  arn = module.eks.oidc_provider_arn
+}
+
+data "aws_iam_policy_document" "external_secrets_assume_role" {
+  statement {
+    actions = ["sts:AssumeRoleWithWebIdentity"]
+    principals {
+      type        = "Federated"
+      identifiers = [data.aws_iam_openid_connect_provider.eks.arn]
+    }
+    condition {
+      test     = "StringEquals"
+      variable = "${replace(module.eks.cluster_oidc_issuer_url, "https://", "")}:sub"
+      values   = ["system:serviceaccount:uptoyoushop:external-secrets"]
+    }
+  }
+}
+
+resource "aws_iam_role" "external_secrets_role" {
+  name               = "${var.cluster_name}-external-secrets-role"
+  assume_role_policy = data.aws_iam_policy_document.external_secrets_assume_role.json
+
+  tags = {
+    Name        = "${var.cluster_name}-external-secrets-role"
+    Environment = var.environment
+  }
+}
+
+
+
+#################################################################
+# IAM Policy for External Secret Operator
+#################################################################
+resource "aws_iam_policy" "external_secrets_policy" {
+  name        = "${var.cluster_name}-external-secrets-policy"
+  description = "Allow External Secrets Operator to read from AWS Secrets Manager"
+
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Effect = "Allow"
+        Action = [
+          "secretsmanager:GetSecretValue",
+          "secretsmanager:DescribeSecret"
+        ]
+        Resource = "*"
+      }
+    ]
+  })
+}
+
+
+resource "aws_iam_role_policy_attachment" "external_secrets_policy_attach" {
+  role       = aws_iam_role.external_secrets_role.name
+  policy_arn = aws_iam_policy.external_secrets_policy.arn
+}

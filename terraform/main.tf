@@ -453,10 +453,6 @@ resource "aws_iam_role_policy_attachment" "ses_policy_attach" {
 #################################################################
 # IAM Role for Exter Secret Operator
 #################################################################
-data "aws_iam_openid_connect_provider" "eks" {
-  arn = module.eks.oidc_provider_arn
-}
-
 data "aws_iam_policy_document" "external_secrets_assume_role" {
   statement {
     actions = ["sts:AssumeRoleWithWebIdentity"]

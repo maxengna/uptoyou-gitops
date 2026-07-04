@@ -13,6 +13,9 @@ spec:
         kind: HelmRepository
         name: external-secrets
         namespace: uptoyoushop
+  dependsOn:
+    - name: aws-load-balancer-controller
+      namespace: flux-system
   install:
     createNamespace: true
   values:

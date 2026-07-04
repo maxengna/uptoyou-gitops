@@ -39,17 +39,17 @@ spec:
             - name: POSTGRES_PASSWORD
               valueFrom:
                 secretKeyRef:
-                  name: postgres-secret
+                  name: uptoyoushop-secret
                   key: POSTGRES_PASSWORD
             - name: STRIPE_SECRET_KEY
               valueFrom:
                 secretKeyRef:
-                  name: stripe-secret
+                  name: uptoyoushop-secret
                   key: STRIPE_SECRET_KEY
             - name: STRIPE_WEBHOOK_SECRET
               valueFrom:
                 secretKeyRef:
-                  name: stripe-secret
+                  name: uptoyoushop-secret
                   key: STRIPE_WEBHOOK_SECRET
             - name: DB_HOST
               value: "postgres-primary.uptoyoushop.svc.cluster.local"

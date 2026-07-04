@@ -39,7 +39,7 @@ spec:
             - name: NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY
               valueFrom:
                 secretKeyRef:
-                  name: stripe-secret
+                  name: uptoyoushop-secret
                   key: NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY
             - name: JWT_SECRET
               value: "b72a6fb9515a62b0de7b12b3c886b5054e7da052da5f3100bc9199a0cf408ece"

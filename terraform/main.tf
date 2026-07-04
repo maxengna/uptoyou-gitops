@@ -374,79 +374,81 @@ resource "aws_iam_role_policy_attachment" "app_s3_policy_attach" {
 #################################################################
 
 # SES Domain Identity
-resource "aws_ses_domain_identity" "mail_domain" {
-  domain = var.ses_domain
-  
-  tags = {
-    Name        = "${var.cluster_name}-ses-domain"
-    Environment = var.environment
-  }
-}
+# ระบุชื่อโดเมนที่จะใช้กับ AWS SES เพื่อยืนยันความเป็นเจ้าของโดเมน
+# resource "aws_ses_domain_identity" "mail_domain" {
+  # domain = var.ses_domain
+# }
 
-# SES Domain Identity Verification (DNS Record)
-resource "aws_ses_domain_dkim" "mail_domain" {
-  domain = aws_ses_domain_identity.mail_domain.domain
-}
+# SES DKIM
+# สร้าง DKIM token สำหรับการตรวจสอบ DNS ของโดเมน
+# resource "aws_ses_domain_dkim" "mail_domain" {
+  # domain = aws_ses_domain_identity.mail_domain.domain
+# }
 
 #################################################################
 # IAM Role for SES (IRSA)
 #################################################################
-data "aws_iam_policy_document" "ses_assume_role" {
-  statement {
-    actions = ["sts:AssumeRoleWithWebIdentity"]
-    principals {
-      type        = "Federated"
-      identifiers = [data.aws_iam_openid_connect_provider.eks.arn]
-    }
-    condition {
-      test     = "StringEquals"
-      variable = "${replace(module.eks.cluster_oidc_issuer_url, "https://", "")}:sub"
-      values   = ["system:serviceaccount:${var.ses_namespace}:${var.ses_service_account}"]
-    }
-  }
-}
+# สร้าง IAM policy document เพื่ออนุญาตให้ Kubernetes service account assume role ผ่าน OIDC
+# โดยจำกัดให้เฉพาะ service account ใน namespace และชื่อที่กำหนดเท่านั้น
+# data "aws_iam_policy_document" "ses_assume_role" {
+#  statement {
+#    actions = ["sts:AssumeRoleWithWebIdentity"]
+#    principals {
+#      type        = "Federated"
+#      identifiers = [data.aws_iam_openid_connect_provider.eks.arn]
+#    }
+#    condition {
+#      test     = "StringEquals"
+#      variable = "${replace(module.eks.cluster_oidc_issuer_url, "https://", "")}:sub"
+#      values   = ["system:serviceaccount:${var.ses_namespace}:${var.ses_service_account}"]
+#    }
+#  }
+#}
 
-resource "aws_iam_role" "ses_role" {
-  name               = "${var.cluster_name}-ses-role"
-  assume_role_policy = data.aws_iam_policy_document.ses_assume_role.json
+# สร้าง IAM role สำหรับ SES service account ที่ระบุไว้
+#resource "aws_iam_role" "ses_role" {
+#  name               = "${var.cluster_name}-ses-role"
+#  assume_role_policy = data.aws_iam_policy_document.ses_assume_role.json
 
-  tags = {
-    Name        = "${var.cluster_name}-ses-role"
-    Environment = var.environment
-  }
-}
+#  tags = {
+#    Name        = "${var.cluster_name}-ses-role"
+#    Environment = var.environment
+#  }
+#}
 
 #################################################################
 # IAM Policy for SES
 #################################################################
-resource "aws_iam_policy" "ses_policy" {
-  name        = "${var.cluster_name}-ses-policy"
-  description = "Policy for SES email sending"
+# นโยบายสำหรับการอนุญาตให้ SES สามารถส่งอีเมลและดูข้อมูลควอต้า/สถิติเกี่ยวกับการส่งได้
+#resource "aws_iam_policy" "ses_policy" {
+#  name        = "${var.cluster_name}-ses-policy"
+#  description = "Policy for SES email sending"
 
-  policy = jsonencode({
-    Version = "2012-10-17"
-    Statement = [
-      {
-        Effect = "Allow"
-        Action = [
-          "ses:SendEmail",
-          "ses:SendRawEmail",
-          "ses:GetSendQuota",
-          "ses:GetSendStatistics",
-          "ses:ListVerifiedEmailAddresses",
-          "ses:ListConfigurationSets",
-          "ses:GetConfigurationSetDeliveryOptions"
-        ]
-        Resource = "*"
-      }
-    ]
-  })
-}
+#  policy = jsonencode({
+#    Version = "2012-10-17"
+#    Statement = [
+#      {
+#        Effect = "Allow"
+#        Action = [
+#          "ses:SendEmail",
+#          "ses:SendRawEmail",
+#          "ses:GetSendQuota",
+#          "ses:GetSendStatistics",
+#          "ses:ListVerifiedEmailAddresses",
+#          "ses:ListConfigurationSets",
+#          "ses:GetConfigurationSetDeliveryOptions"
+#        ]
+#        Resource = "*"
+#      }
+#    ]
+#  })
+#}
 
-resource "aws_iam_role_policy_attachment" "ses_policy_attach" {
-  role       = aws_iam_role.ses_role.name
-  policy_arn = aws_iam_policy.ses_policy.arn
-}
+# ผูกนโยบาย SES เข้ากับ IAM role เพื่อให้ service account สามารถใช้งาน SES ได้
+#resource "aws_iam_role_policy_attachment" "ses_policy_attach" {
+#  role       = aws_iam_role.ses_role.name
+#  policy_arn = aws_iam_policy.ses_policy.arn
+#}
 
 
 

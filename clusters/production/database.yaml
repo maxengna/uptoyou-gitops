@@ -12,4 +12,5 @@ spec:
     name: flux-system
   dependsOn:
     - name: infrastructure # ← รอให้ infrastructure พร้อมก่อน
+    - name: infrastructure-secrets # ← รอให้ secrets พร้อมก่อน
   timeout: 5m0s

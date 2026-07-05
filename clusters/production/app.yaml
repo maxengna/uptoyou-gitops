@@ -12,5 +12,6 @@ spec:
     name: flux-system
   dependsOn:
     - name: infrastructure # ← รอให้ Sealed Secrets CRD พร้อมก่อน
+    - name: infrastructure-secrets # ← รอให้ Sealed Secrets Controller พร้อมก่อน
     - name: database # ← รอให้ Database พร้อมก่อน
   timeout: 5m0s

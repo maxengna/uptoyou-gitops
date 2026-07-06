@@ -23,4 +23,5 @@ spec:
       create: true
       name: external-secrets
       annotations:
-        eks.amazonaws.com/role-arn: arn:aws:iam::<ACCOUNT_ID>:role/${var.cluster_name}-external-secrets-role
+        eks.amazonaws.com/role-arn: "arn:aws:iam::575108951885:role/uptoyou-eks-cluster-external-secrets-role"
+        # eks.amazonaws.com/role-arn: arn:aws:iam::<ACCOUNT_ID>:role/${var.cluster_name}-external-secrets-role

@@ -3,7 +3,7 @@ kind: Kustomization
 resources:
   - ./flux-system # controllers
   - infrastructure.yaml # namespace / sealed-secrets / aws-load-balancer-controller
-  - secrets.yaml
+  - external-secret.yaml
   - database.yaml # PostgreSQL
   - app.yaml # Applications
   - capacitor/capacitor.yaml # capacitor UI

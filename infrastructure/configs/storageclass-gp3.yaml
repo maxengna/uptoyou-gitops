@@ -7,5 +7,5 @@ parameters:
   type: gp3                         # EBS volume type gp3
   fsType: ext4
 volumeBindingMode: WaitForFirstConsumer  # สร้าง volume ใน AZ เดียวกับ pod
-reclaimPolicy: Retain
+reclaimPolicy: Delete
 allowVolumeExpansion: true

@@ -21,6 +21,6 @@ spec:
           env:
             - name: NODE_ENV
               value: "production"
-            - name: NEXT_PUBLIC_API_URL
-              value: "/api"
+            # - name: NEXT_PUBLIC_API_URL
+            #   value: "/api"
               # value: "http://uptoyou.shop/api"

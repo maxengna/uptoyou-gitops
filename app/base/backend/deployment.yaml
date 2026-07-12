@@ -51,6 +51,10 @@ spec:
                 secretKeyRef:
                   name: uptoyoushop-secret
                   key: STRIPE_WEBHOOK_SECRET
+            - name: FRONTEND_URL
+              value: "https://uptoyoushop.techallows.com"
+            - name: CORS_ORIGIN
+              value: "https://uptoyoushop.techallows.com"
             - name: DB_HOST
               value: "postgres-primary.uptoyoushop.svc.cluster.local"
             - name: DB_PORT

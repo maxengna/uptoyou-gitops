@@ -22,6 +22,6 @@ spec:
             - name: NODE_ENV
               value: "production"
             - name: DB_HOST
-              value: "postgres-primary.uptoyoushop.svc.cluster.local"
+              value: "postgres-postgresql.uptoyoushop.svc.cluster.local"
             - name: DB_PORT
               value: "5432"

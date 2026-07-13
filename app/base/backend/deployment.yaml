@@ -63,7 +63,7 @@ spec:
             - name: CORS_ORIGIN
               value: "https://uptoyoushop.techallows.com"
             - name: DB_HOST
-              value: "postgres-primary.uptoyoushop.svc.cluster.local"
+              value: "postgres-postgresql.uptoyoushop.svc.cluster.local"
             - name: DB_PORT
               value: "5432"
             - name: DB_NAME
@@ -73,8 +73,7 @@ spec:
             - name: JWT_SECRET
               value: "b72a6fb9515a62b0de7b12b3c886b5054e7da052da5f3100bc9199a0cf408ece"
             - name: DATABASE_URL
-              value: "postgresql://postgres:$(POSTGRES_PASSWORD)@postgres-primary.uptoyoushop.svc.cluster.local:5432/uptoyoushop"
-              # value: "postgresql://postgres:$(POSTGRES_PASSWORD)@postgres-postgresql:5432/uptoyoushop"   #local testing
+              value: "postgresql://postgres:$(POSTGRES_PASSWORD)@postgres-postgresql:5432/uptoyoushop"
             - name: AWS_S3_PRODUCTS_BUCKET
               value: "uptoyoushop-product-bucket"
             - name: AWS_S3_CATEGORIES_BUCKET

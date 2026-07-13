@@ -23,6 +23,13 @@ spec:
             - name: http
               containerPort: 5000
               protocol: TCP
+          startupProbe:
+            httpGet:
+              path: /api/health
+              port: 5000
+            initialDelaySeconds: 10
+            periodSeconds: 5
+            failureThreshold: 12
           livenessProbe:
             httpGet:
               path: /api/health
@@ -33,7 +40,7 @@ spec:
             httpGet:
               path: /api/health
               port: 5000
-            initialDelaySeconds: 5
+            initialDelaySeconds: 15
             periodSeconds: 5
           env:
             - name: POSTGRES_PASSWORD
@@ -66,7 +73,8 @@ spec:
             - name: JWT_SECRET
               value: "b72a6fb9515a62b0de7b12b3c886b5054e7da052da5f3100bc9199a0cf408ece"
             - name: DATABASE_URL
-              value: "postgresql://postgres:$(POSTGRES_PASSWORD)@postgres-postgresql:5432/uptoyoushop"
+              value: "postgresql://postgres:$(POSTGRES_PASSWORD)@postgres-primary.uptoyoushop.svc.cluster.local:5432/uptoyoushop"
+              # value: "postgresql://postgres:$(POSTGRES_PASSWORD)@postgres-postgresql:5432/uptoyoushop"   #local testing
             - name: AWS_S3_PRODUCTS_BUCKET
               value: "uptoyoushop-product-bucket"
             - name: AWS_S3_CATEGORIES_BUCKET

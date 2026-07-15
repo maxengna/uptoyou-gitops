@@ -20,7 +20,7 @@ spec:
   values:
     clusterName: "uptoyou-eks-cluster"
     region: "ap-southeast-1"
-    vpcId: "vpc-0ec948dc458ce128c"
+    vpcId: "vpc-06671290f0920c900"
     serviceAccount:
       create: true
       name: aws-load-balancer-controller

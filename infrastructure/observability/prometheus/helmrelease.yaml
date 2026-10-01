@@ -1,0 +1,39 @@
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: prometheus
+  namespace: observability
+spec:
+  chart:
+    spec:
+      chart: kube-prometheus-stack
+      version: "91.8.1"
+      reconcileStrategy: ChartVersion
+      sourceRef:
+        kind: HelmRepository
+        name: prometheus-community
+  interval: 10m0s
+  values:
+    grafana:
+      enabled: false
+    alertmanager:
+      enabled: false                 
+    prometheus-node-exporter:  # ดู node , cpu, memory  ของเครื่อง
+      enabled: true   
+    kube-state-metrics:  # ดู kubernetes object เช่น pod , service 
+      enabled: true
+    prometheus-pushgateway:  # สำหรับงาน batch processing 
+      enabled: false             
+
+    prometheus:
+      prometheusSpec:
+        retention: 12h
+        resources:
+          requests:
+            cpu: 250m
+            memory: 512Mi
+          limits:
+            cpu: 500m
+            memory: 1Gi
+
+  

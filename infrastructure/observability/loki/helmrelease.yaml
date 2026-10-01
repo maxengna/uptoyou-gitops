@@ -1,0 +1,64 @@
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: loki
+  namespace: observability
+spec:
+  chart:
+    spec:
+      chart: loki
+      reconcileStrategy: ChartVersion
+      sourceRef:
+        kind: HelmRepository
+        name: grafana-loki
+  interval: 1h
+  values: 
+    deploymentMode: monolithic  # include read, write, querier, ingester 
+
+    gateway:
+      enabled: false   # disable ingress-nginx 
+   
+    loki:
+      auth_enabled: false  # no attach Header [X-Scope-OrgID] from Alloy
+
+      commonConfig:
+        replication_factor: 1
+
+      schemaConfig:   # index for query in loki
+        configs:
+          - from: "2024-04-01"
+            store: tsdb
+            object_store: filesystem   # or Amazon S3
+            schema: v13
+            index:
+              prefix: index_
+              period: 24h
+
+      storage:   # filesystem for chunk and rule
+        type: filesystem
+        filesystem:
+          chunks_directory: /var/loki/chunks
+          rules_directory: /var/loki/rules
+
+    singleBinary:   # total pod of mode monolithic
+      replicas: 1
+      resources:
+        limits:
+          cpu: 500m
+          memory: 512Mi
+        requests:
+          cpu: 250m
+          memory: 256Mi
+      affinity : {}
+
+    monitoring:
+      selfMonitoring:  # self healthcheck
+        enabled: false
+        grafanaAgent:
+          installOperator: false
+
+    chunksCache:  # cache in memory
+      enabled: false
+    
+    resultsCache:  # result cache for query
+      enabled: false

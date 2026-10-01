@@ -1,0 +1,73 @@
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: tempo
+  namespace: observability
+spec:
+  interval: 5m
+  # -- Helm install/upgrade strategy with auto-remediation
+  install:
+    remediation:
+      retries: 3
+  upgrade:
+    cleanupOnFail: true
+    remediation:
+      retries: 3
+  chart:
+    spec:
+      chart: tempo
+      version: "1.12.*"          # pin to minor version for stability
+      reconcileStrategy: ChartVersion
+      sourceRef:
+        kind: HelmRepository
+        name: grafana-community
+  values:
+    # -- Persistence (disabled for demo to save EBS costs)
+    persistence:
+      enabled: false
+
+    # -- Tempo server configuration
+    tempo:
+      # Resource management
+      resources:
+        limits:
+          cpu: 500m
+          memory: 512Mi
+        requests:
+          cpu: 250m
+          memory: 256Mi
+
+      # Trace retention policy
+      retention: 24h
+
+      # Enable metrics generation from traces
+      metricsGenerator:
+        enabled: true
+        remoteWriteUrl: "http://prometheus-server.observability.svc.cluster.local:80/api/v1/write"
+
+      # Receivers — accept traces via OTLP (gRPC + HTTP)
+      receivers:
+        otlp:
+          protocols:
+            grpc:
+              endpoint: "0.0.0.0:4317"
+            http:
+              endpoint: "0.0.0.0:4318"
+
+      # Global rate limiting to protect the cluster
+      overrides:
+        defaults:
+          ingestion:
+            rate_limit_bytes: 5000000       # 5MB/s max ingestion
+            burst_size_bytes: 10000000      # 10MB burst
+
+    # -- Tempo service configuration
+    service:
+      type: ClusterIP
+
+    # -- ServiceMonitor for Prometheus scraping
+    serviceMonitor:
+      enabled: true
+      additionalLabels:
+        release: prometheus
+

@@ -1,0 +1,68 @@
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: otel-collector
+  namespace: observability
+spec:
+  interval: 1h
+  chart:
+    spec:
+      chart: opentelemetry-collector
+      sourceRef:
+        kind: HelmRepository
+        name: otel-collector
+        namespace: observability
+      version: "0.80.0"
+  values:
+    mode: deployment
+    replicaCount: 1
+    resource:
+      limits:
+        cpu: 500m
+        memory: 512Mi
+      requests:
+        cpu: 250m 
+        memory: 256Mi
+    config:
+      receivers:
+        otlp:
+          protocols:
+            grpc:
+              endpoint: "0.0.0.0:4317"
+
+      processors:
+        memory_limiter:
+          check_interval: 1s
+          limit_percentage: 75
+          spike_limit_percentage: 20
+        batch:
+          send_batch_size: 8192
+          timeout: 200ms
+
+      exporters:
+        debug:
+          verbosity: detailed
+
+        prometheus:
+          endpoint: "0.0.0.0:9464"
+
+        otlp/tempo:
+          endpoint: tempo.observability.svc.cluster.local:4317
+          tls:
+            insecure: true
+
+      service:
+        telemetry:
+          logs:
+            level: "info"  
+
+        pipelines:
+          traces:
+            receivers: [otlp]
+            processors: [memory_limiter,batch]
+            exporters: [debug, otlp/tempo]
+
+          metrics:
+            receivers: [otlp]
+            processors: [memory_limiter,batch]
+            exporters: [debug,prometheus]

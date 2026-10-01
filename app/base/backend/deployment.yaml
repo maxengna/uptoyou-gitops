@@ -93,6 +93,16 @@ spec:
               value: "uptoyoushop-product-bucket"
             - name: AWS_S3_CATEGORIES_BUCKET
               value: "uptoyoushop-category-bucket"
+            - name: OTEL_SERVICE_NAME
+              value: "nestjs-auto-instrumented"
+            - name: OTEL_SERVICE_VERSION
+              value: "1.0.0"
+            - name: OTEL_EXPORTER_OTLP_ENDPOINT
+              value: "http://otel-collector.observability.svc.cluster.local:4317"
+            - name: OTEL_EXPORTER_OTLP_TRACES_ENDPOINT
+              value: "http://otel-collector.observability.svc.cluster.local:4317"
+            - name: OTEL_EXPORTER_OTLP_METRICS_ENDPOINT
+              value: "http://otel-collector.observability.svc.cluster.local:4317"
           resources:
             requests:
               cpu: 200m

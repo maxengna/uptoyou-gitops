@@ -6,3 +6,10 @@ resources:
   # - controllers/sealed-secrets/
   # - controllers/ses/
   - configs/
+  - observability/alloy/
+  - observability/loki/
+  - observability/otel-collector/
+  - observability/tempo/
+  - observability/prometheus/
+  - observability/grafana/
+

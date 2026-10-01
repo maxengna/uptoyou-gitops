@@ -64,10 +64,10 @@ module "eks" {
   eks_managed_node_groups = {
     public-nodes = {
       instance_types = ["t3.large"]
-
-      min_size     = 1
-      max_size     = 3
-      desired_size = 1
+      # Auto Scaling Group
+      min_size     = 2
+      max_size     = 4
+      desired_size = 2
 
       # 🔥 สำคัญ: ให้ node มี public IP
       subnet_ids = module.vpc.public_subnets
@@ -98,6 +98,7 @@ data "aws_iam_openid_connect_provider" "eks" {
 #################################################################
 # IAM Role for EBS CSI Driver
 #################################################################
+# Trust Policy
 data "aws_iam_policy_document" "ebs_csi_assume_role" {
   statement {
     actions = ["sts:AssumeRoleWithWebIdentity"]
@@ -114,9 +115,10 @@ data "aws_iam_policy_document" "ebs_csi_assume_role" {
   }
 }
 
+# IAM Role 
 resource "aws_iam_role" "ebs_csi_role" {
   name               = "${var.cluster_name}-ebs-csi-role"
-  assume_role_policy = data.aws_iam_policy_document.ebs_csi_assume_role.json
+  assume_role_policy = data.aws_iam_policy_document.ebs_csi_assume_role.json # Link to Trust Policy 
 
   tags = {
     Name        = "${var.cluster_name}-ebs-csi-role"
@@ -124,10 +126,12 @@ resource "aws_iam_role" "ebs_csi_role" {
   }
 }
 
+# IAM Permission
 data "aws_iam_policy" "ebs_csi_policy" {
   arn = "arn:aws:iam::aws:policy/service-role/AmazonEBSCSIDriverPolicy"
 }
 
+# IAM Permission link to IAM Role
 resource "aws_iam_role_policy_attachment" "ebs_csi_policy_attach" {
   role       = aws_iam_role.ebs_csi_role.name
   policy_arn = data.aws_iam_policy.ebs_csi_policy.arn
@@ -254,7 +258,7 @@ resource "aws_eks_addon" "coredns" {
 #################################################################
 resource "aws_s3_bucket" "category_bucket" {
   bucket = "uptoyoushop-category-bucket-${data.aws_caller_identity.current.account_id}"
-  
+
   tags = {
     Name        = "UpToYouShop Category"
     Environment = var.environment
@@ -282,7 +286,7 @@ resource "aws_s3_bucket_public_access_block" "category_bucket" {
 
 resource "aws_s3_bucket" "product_bucket" {
   bucket = "uptoyoushop-product-bucket-${data.aws_caller_identity.current.account_id}"
-  
+
   tags = {
     Name        = "UpToYouShop Product"
     Environment = var.environment
@@ -376,13 +380,13 @@ resource "aws_iam_role_policy_attachment" "app_s3_policy_attach" {
 # SES Domain Identity
 # ระบุชื่อโดเมนที่จะใช้กับ AWS SES เพื่อยืนยันความเป็นเจ้าของโดเมน
 # resource "aws_ses_domain_identity" "mail_domain" {
-  # domain = var.ses_domain
+# domain = var.ses_domain
 # }
 
 # SES DKIM
 # สร้าง DKIM token สำหรับการตรวจสอบ DNS ของโดเมน
 # resource "aws_ses_domain_dkim" "mail_domain" {
-  # domain = aws_ses_domain_identity.mail_domain.domain
+# domain = aws_ses_domain_identity.mail_domain.domain
 # }
 
 #################################################################

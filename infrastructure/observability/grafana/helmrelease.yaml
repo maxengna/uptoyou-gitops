@@ -1,0 +1,53 @@
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: grafana
+  namespace: observability
+spec:
+  values:
+    adminPassword: "p@ssW0rd"
+    datasources:
+      datasources.yaml:
+        apiVersion: 1
+        datasources:
+          - name: Prometheus
+            type: prometheus
+            uid: prometheus
+            url: http://prometheus-kube-prometheus-prometheus.observability:9090/
+            access: proxy
+            isdefault: true
+          - name: tempo
+            type: tempo
+            uid: tempo
+            url: http://tempo.observability:3200/
+            access: proxy
+            jsondata:
+              tracesToLogsV2:
+                dataSourceUid: loki
+              tracesToMetrics:
+                dataSourceUid: prometheus
+              nodeGraph:
+                enabled: true
+          - name: Loki
+            type: loki
+            uid: loki
+            url: http://loki.observability.svc.cluster.local:3100
+            access: proxy
+    resources:
+      requests:
+        cpu: 250m
+        memory: 256Mi
+      limits:
+        cpu: 500m
+        memory: 512Mi
+  chart:
+    spec:
+      chart: grafana
+      version: "8.10.*"
+      reconcileStrategy: ChartVersion
+      sourceRef:
+        kind: HelmRepository
+        name: grafana
+  install:
+    createNamespace: false
+  interval: 10m0s

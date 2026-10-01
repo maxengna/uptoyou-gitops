@@ -1,0 +1,84 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: alloy-config
+  namespace: observability
+data:
+  config.alloy: |
+    logging {
+      level  = "info"
+      format = "logfmt"
+    }
+
+    // 1. ค้นหา Pods ใน Cluster
+    discovery.kubernetes "pods" {
+      role = "pod"
+    }
+
+    // 2. กรองและดึง Label สำคัญ (namespace, pod, container, app)
+    discovery.relabel "pod_logs" {
+      targets = discovery.kubernetes.pods.targets
+
+      // กรองเฉพาะ Pod ที่รันอยู่บน Node เดียวกับ Alloy pod ตัวนี้
+      rule {
+        source_labels = ["__meta_kubernetes_pod_node_name"]
+        action        = "keep"
+        regex         = sys.env("HOSTNAME")
+      }
+
+      // ดึง Namespace
+      rule {
+        source_labels = ["__meta_kubernetes_namespace"]
+        target_label  = "namespace"
+      }
+
+      // ดึงชื่อ Pod
+      rule {
+        source_labels = ["__meta_kubernetes_pod_name"]
+        target_label  = "pod"
+      }
+      // ดึงชื่อ Container
+      rule {
+        source_labels = ["__meta_kubernetes_pod_container_name"]
+        target_label  = "container"
+      }
+
+       // ดึง Label app จากตัว Pod (ถ้ามี)
+      rule {
+        source_labels = ["__meta_kubernetes_pod_label_app_kubernetes_io_name", "__meta_kubernetes_pod_label_app"]
+        regex         = "^(?:;)*([^;]+)(?:;.*)?$"
+        target_label  = "app"
+      }
+
+      // ตั้งค่า Path ของไฟล์ Log บน Host Node
+      rule {
+        source_labels = ["__meta_kubernetes_pod_uid", "__meta_kubernetes_pod_container_name"]
+        separator     = "/"
+        action        = "replace"
+        replacement   = "/var/log/pods/*$1/*.log"
+        target_label  = "__path__"
+      }
+    }
+
+     // 3. อ่านไฟล์ Log ตาม Targets ที่ Relabel แล้ว
+    loki.source.kubernetes "pods" {
+      targets    = discovery.relabel.pod_logs.output
+      forward_to = [loki.process.pod_logs.receiver]
+    }
+
+     // 4. กำหนด Cluster Label และประมวลผล
+    loki.process "pod_logs" {
+      stage.static_labels {
+        values = {
+          cluster = "uptoyou-eks", // เปลี่ยนเป็นชื่อ EKS Cluster ของคุณ
+        }
+      }
+      forward_to = [loki.write.endpoint.receiver]
+    }
+
+    // 5. ส่งต่อไปยัง Loki Service
+    loki.write "endpoint" {
+      endpoint {
+        url = "http://loki.observability.svc.cluster.local:3100/loki/api/v1/push"
+      }
+    }

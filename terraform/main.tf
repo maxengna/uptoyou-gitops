@@ -513,3 +513,28 @@ resource "aws_iam_role_policy_attachment" "external_secrets_policy_attach" {
   role       = aws_iam_role.external_secrets_role.name
   policy_arn = aws_iam_policy.external_secrets_policy.arn
 }
+
+
+
+#################################################################
+# AWS ECR Repository
+#################################################################
+resource "aws_ecr_repository" "app" {
+  name                 = "my-devops-app"
+  image_tag_mutability = "IMMUTABLE"
+
+  image_scanning_configuration {
+    scan_on_push = true
+  }
+
+  encryption_configuration {
+    encryption_type = "AES256"
+  }
+
+  tags = {
+    Project     = "devops-project"
+    Environment = "dev"
+    ManagedBy   = "terraform"
+  }
+}
+

@@ -11,6 +11,6 @@ output "private_subnets_ids" {
 }
 
 output "security_groups_id" {
-  value = [for sec in var.security_groups : aws_security_group.uptoyoushop-sg[sec.name].id]
+  value = { for k, v in aws_security_group.uptoyoushop-sg : k => v.id }
 }
 

@@ -1,26 +1,70 @@
-variable "naming_prefix" {}
+variable "naming_prefix" {
+  type        = string
+  description = "Naming prefix for all resources."
+}
+
+variable "common_tags" {
+  type        = map(string)
+  description = "common tags for all resources"
+}
+
+variable "vpc_cidr" {
+  type        = string
+  description = "VPC CIDR block"
+}
 
 variable "public_subnet_cidr" {
   type        = list(string)
   description = "Public Subnet CIDR values"
-  default     = ["10.0.1.0/24", "10.0.2.0/24"]
 }
 
 
 variable "private_subnet_cidr" {
   type        = list(string)
   description = "Private Subnet CIDR values"
-  default     = ["10.0.3.0/24", "10.0.4.0/24"]
+}
+
+
+variable "public_rt_cidr" {
+  type        = string
+  description = "public route table CIDR values"
 }
 
 
 variable "azs" {
   type        = list(string)
   description = "Availability Zone"
-  default     = ["ap-southeast-1a", "ap-southeast-1b"]
 }
 
+
 variable "security_groups" {
-  description = "Security groups configuration passed from root module"
+  type = list(object({
+    name        = string
+    description = string
+    ingress = list(object({
+      description      = string
+      protocol         = string
+      from_port        = number
+      to_port          = number
+      cidr_blocks      = list(string)
+      ipv6_cidr_blocks = list(string)
+    }))
+    egress = list(object({
+      description      = string
+      protocol         = string
+      from_port        = number
+      to_port          = number
+      cidr_blocks      = list(string)
+      ipv6_cidr_blocks = list(string)
+    }))
+  }))
+  description = "List of security groups with ingress rules"
 }
+
+
+
+
+
+
+
 

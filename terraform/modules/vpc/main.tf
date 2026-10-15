@@ -2,13 +2,13 @@
 # VPC
 ################################################################################
 resource "aws_vpc" "uptoyoushop-main" {
-  cidr_block           = "10.0.0.0/16"
+  cidr_block           = var.vpc_cidr
   enable_dns_hostnames = true
   enable_dns_support   = true
 
-  tags = {
-    Name = "uptoyoushop-main"
-  }
+  tags = merge(var.common_tags, {
+    Name = "main"
+  })
 }
 
 ################################################################################
@@ -18,12 +18,12 @@ resource "aws_subnet" "public_subnets" {
   count                   = length(var.public_subnet_cidr)
   vpc_id                  = aws_vpc.uptoyoushop-main.id
   cidr_block              = element(var.public_subnet_cidr, count.index)
-  availability_zone       = element(var.azs.id)
+  availability_zone       = element(var.azs, count.index)
   map_public_ip_on_launch = true
 
-  tags = {
-    Name = "uptoyoushop-public-subnet-${count.index}"
-  }
+  tags = merge(var.common_tags, {
+    Name = "public-subnet-${count.index}"
+  })
 }
 
 ################################################################################
@@ -33,11 +33,11 @@ resource "aws_subnet" "private_subnets" {
   count             = length(var.private_subnet_cidr)
   vpc_id            = aws_vpc.uptoyoushop-main.id
   cidr_block        = element(var.private_subnet_cidr, count.index)
-  availability_zone = element(var.azs.id, count.index)
+  availability_zone = element(var.azs, count.index)
 
-  tags = {
-    Name = "uptoyoushop-private-subnet-${count.index}"
-  }
+  tags = merge(var.common_tags, {
+    Name = "private-subnet-${count.index}"
+  })
 }
 
 ################################################################################
@@ -46,9 +46,9 @@ resource "aws_subnet" "private_subnets" {
 resource "aws_internet_gateway" "gw" {
   vpc_id = aws_vpc.uptoyoushop-main.id
 
-  tags = {
-    Name = "uptoyoushop-igw"
-  }
+  tags = merge(var.common_tags, {
+    Name = "igw"
+  })
 }
 
 ################################################################################
@@ -58,13 +58,13 @@ resource "aws_route_table" "uptoyoushop-public-rt" {
   vpc_id = aws_vpc.uptoyoushop-main.id
 
   route {
-    cidr_block = "0.0.0.0/0"
+    cidr_block = var.public_rt_cidr
     gateway_id = aws_internet_gateway.gw.id
   }
 
-  tags = {
-    Name = "uptoyoushop-public-rt"
-  }
+  tags = merge(var.common_tags, {
+    Name = "public-rt"
+  })
 }
 
 ################################################################################
@@ -72,7 +72,7 @@ resource "aws_route_table" "uptoyoushop-public-rt" {
 ################################################################################
 resource "aws_route_table_association" "public_subnet_asso" {
   count          = length(var.public_subnet_cidr)
-  subnet_id      = element(aws_subnet.public_subnet[*].id, count.index)
+  subnet_id      = element(aws_subnet.public_subnets[*].id, count.index)
   route_table_id = aws_route_table.uptoyoushop-public-rt.id
 }
 
@@ -95,22 +95,26 @@ resource "aws_security_group" "uptoyoushop-sg" {
       to_port          = ingress.value.to_port
       protocol         = ingress.value.protocol
       cidr_blocks      = ingress.value.cidr_blocks
-      ipv6_cidr_blocks = ingress.value.ipv6_cidr_blocs
+      ipv6_cidr_blocks = ingress.value.ipv6_cidr_blocks
 
     }
   }
 
-  # dynamic "egress" {
-  #   for_each = try(each.value.egress, [])
-  #   content {
-  #     description      = egress.value.description
-  #     from_port        = egress.value.from_port
-  #     to_port          = egress.value.to_port
-  #     protocol         = egress.value.protocol
-  #     cidr_blocks      = egress.value.cidr_blocks
-  #     ipv6_cidr_blocks = egress.value.ipv6_cidr_blocks
-  #   }
-  # }
+  dynamic "egress" {
+    for_each = try(each.value.egress, [])
+    content {
+      description      = egress.value.description
+      from_port        = egress.value.from_port
+      to_port          = egress.value.to_port
+      protocol         = egress.value.protocol
+      cidr_blocks      = egress.value.cidr_blocks
+      ipv6_cidr_blocks = egress.value.ipv6_cidr_blocks
+    }
+  }
+
+  tags = merge(var.common_tags, {
+    Name = "sg"
+  })
 }
 
 

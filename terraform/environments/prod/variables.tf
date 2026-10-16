@@ -1,3 +1,8 @@
+variable "aws_region" {
+  type        = string
+  description = "region for aws resources"
+}
+
 variable "naming_prefix" {
   type        = string
   description = "Naming prefix for all resources."
@@ -52,4 +57,12 @@ variable "security_groups" {
     }))
   }))
   description = "List of security groups with ingress rules"
+}
+
+
+variable "cluster_config" {
+  type = object({
+    name    = string
+    version = string
+  })
 }

@@ -66,3 +66,30 @@ variable "cluster_config" {
     version = string
   })
 }
+
+
+variable "node_groups" {
+  type = list(object({
+    name           = string
+    instance_types = list(string)
+    ami_type       = string
+    capacity_type  = string
+    disk_size      = number
+    scaling_config = object({
+      desired_size = number
+      min_size     = number
+      max_size     = number
+    })
+    update_config = object({
+      max_unavailable = number
+    })
+  }))
+  description = "List of node groups with configuration"
+}
+
+
+variable "public_subnets_ids" {
+  type        = list(string)
+  description = "public subnet id"
+}
+

@@ -5,6 +5,9 @@ locals {
   }
 }
 
+################################################################################
+# Create VPC and components
+################################################################################
 module "vpc" {
   source              = "../../modules/vpc"
   vpc_cidr            = var.vpc.cidr
@@ -16,4 +19,18 @@ module "vpc" {
   public_rt_cidr      = var.public_rt_cidr
   azs                 = var.azs
 
+}
+
+################################################################################
+# Create EKS Cluster and Node Groups
+################################################################################
+module "eks" {
+  source             = "../../modules/eks"
+  public_subnets_id  = module.vpc.public_subnets_ids
+  security_groups_id = module.vpc.security_groups_id
+  common_tags        = local.common_tags
+  cluster_config     = var.cluster_config
+  naming_prefix      = var.naming_prefix
+  node_groups        = var.node_groups
+  addons             = var.addons
 }

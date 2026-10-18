@@ -15,9 +15,14 @@ variable "cluster_config" {
   })
 }
 
+variable "public_subnets_id" {
+  type        = list(string)
+  description = "Public Subnet IDs"
+}
+
 variable "security_groups_id" {
   type        = list(string)
-  description = "security group id"
+  description = "Security Group IDs"
 }
 
 variable "node_groups" {
@@ -39,13 +44,6 @@ variable "node_groups" {
 
   }))
 }
-
-
-variable "public_subnets_ids" {
-  type        = list(string)
-  description = "public subnet id"
-}
-
 
 variable "addons" {
   type = map(object({

@@ -67,7 +67,6 @@ variable "cluster_config" {
   })
 }
 
-
 variable "node_groups" {
   type = list(object({
     name           = string
@@ -88,8 +87,15 @@ variable "node_groups" {
 }
 
 
-variable "public_subnets_ids" {
-  type        = list(string)
-  description = "public subnet id"
+variable "addons" {
+  type = map(object({
+    name        = string
+    version     = optional(string)
+    most_recent = optional(bool)
+    # resolve_conflicts = optional(string)
+    # resolve_conflicts_on_update = optional(string)
+  }))
+  description = "map of eks addons"
 }
+
 

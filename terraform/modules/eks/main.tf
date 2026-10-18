@@ -7,10 +7,8 @@ resource "aws_eks_cluster" "uptoyoushop-eks-cluster" {
   version  = var.cluster_config.version
 
   vpc_config {
-    subnet_ids = flatten(module.vpc.public_subnets_ids)
-    security_group_ids = [
-      module.vpc.security_groups_id
-    ]
+    subnet_ids         = var.public_subnets_id
+    security_group_ids = var.security_groups_id
   }
 
   depends_on = [
@@ -30,7 +28,7 @@ resource "aws_eks_node_group" "uptoyoushop-node-group" {
   cluster_name    = aws_eks_cluster.uptoyoushop-eks-cluster.name
   node_group_name = "${var.naming.prefix}-${each.value.name}"
   node_role_arn   = aws_iamrole.NodeGroupRole.arn
-  subnet_ids      = flatten(var.public_subnets_ids)
+  subnet_ids      = flatten(module.vpc.public_subnets_ids)
 
   scaling_config {
     desired_size = try(each.value.scaling_config.desired_size, 1)
@@ -87,6 +85,7 @@ resource "aws_eks_addon" "addons" {
   cluster_name                = aws_eks_cluster.uptoyoushop-eks-cluster.name
   addon_name                  = each.value.name
   addon_version               = coalesce(each.value.version, data.aws_eks_addon_version.eks_addons[each.key].version)
+  service_account_role_arn    = optional(each.value.service_account_role_arn)
   resolve_conflicts_on_create = "OVERWRITE"
 
   tags = merge(var.common_tags, {

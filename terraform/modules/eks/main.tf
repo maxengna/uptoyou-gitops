@@ -27,7 +27,7 @@ resource "aws_eks_node_group" "uptoyoushop-node-group" {
   for_each        = { for node_group in var.node_groups : node_group.name => node_group }
   cluster_name    = aws_eks_cluster.uptoyoushop-eks-cluster.name
   node_group_name = "${var.naming.prefix}-${each.value.name}"
-  node_role_arn   = aws_iamrole.NodeGroupRole.arn
+  node_role_arn   = aws_iam_role.NodeGroupRole.arn
   subnet_ids      = flatten(module.vpc.public_subnets_ids)
 
   scaling_config {
@@ -91,7 +91,5 @@ resource "aws_eks_addon" "addons" {
   tags = merge(var.common_tags, {
     Name = "${var.naming_prefix}-addon-${each.value.name}"
   })
-
-  depends_on = [aws_eks_node_group.uptoyoushop-node-group]
-
+  depends_on = optional([each.value.depends_on])
 }

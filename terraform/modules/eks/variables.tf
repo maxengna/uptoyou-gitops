@@ -47,9 +47,11 @@ variable "node_groups" {
 
 variable "addons" {
   type = map(object({
-    name        = string
-    version     = optional(string)
-    most_recent = optional(bool)
+    name                     = string
+    version                  = optional(string)
+    most_recent              = optional(bool)
+    service_account_role_arn = optional(string)
+    depends_on               = optional(list(string))
     # resolve_conflicts = optional(string)
     # resolve_conflicts_on_update = optional(string)
   }))

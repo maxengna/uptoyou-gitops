@@ -34,3 +34,13 @@ module "eks" {
   node_groups        = var.node_groups
   addons             = var.addons
 }
+
+################################################################################
+# Create S3 Bucket
+################################################################################
+module "s3" {
+  source        = "../../modules/s3"
+  common_tags   = local.common_tags
+  s3_bucket     = var.s3_bucket
+  naming_prefix = var.naming_prefix
+}

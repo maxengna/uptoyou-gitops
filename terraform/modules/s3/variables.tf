@@ -5,5 +5,14 @@ variable "common_tags" {
 
 variable "naming_prefix" {
   type        = string
-  description = "naming prefix for all resources"
+  description = "naming prefix for S3"
 }
+
+variable "s3_bucket" {
+  type = map(object({
+    bucket_name     = string
+    bucket_tag_name = string
+  }))
+}
+
+

@@ -1,21 +1,24 @@
 #################################################################
-# Category Bucket
+# S3 Bucket
 #################################################################
-data "aws_caller_identity" "current" {}
 
-resource "aws_s3_bucket" "category" {
-  bucket = "uptoyoushop-category-bucket-${data.aws_caller_identity.current.account_id}"
+resource "aws_s3_bucket" "uptoyoushop-bk" {
+  for_each = var.s3_bucket
+
+  bucket = each.value.bucket_name
 
   tags = merge(var.common_tags, {
-    Name = "Category"
+    Name = each.value.bucket_tag_name
   })
 }
 
 #################################################################
-# Category Bucket Encryption
+# S3 Bucket Encryption
 #################################################################
-resource "aws_s3_bucket_server_side_encryption_configuration" "category" {
-  bucket = aws_s3_bucket.category.id
+resource "aws_s3_bucket_server_side_encryption_configuration" "uptoyoushop-bk-encrypt" {
+  for_each = aws_s3_bucket.uptoyoushop-bk
+
+  bucket = each.value.id
 
   rule {
     apply_server_side_encryption_by_default {
@@ -25,46 +28,12 @@ resource "aws_s3_bucket_server_side_encryption_configuration" "category" {
 }
 
 #################################################################
-# Category Bucket Public Access Block
+# S3 Bucket Public Access Block
 #################################################################
-resource "aws_s3_bucket_public_access_block" "category" {
-  bucket = aws_s3_bucket.category.id
+resource "aws_s3_bucket_public_access_block" "uptoyoushop-bk-public" {
+  for_each = aws_s3_bucket.uptoyoushop-bk
 
-  block_public_acls       = true
-  block_public_policy     = true
-  ignore_public_acls      = true
-  restrict_public_buckets = true
-}
-
-#################################################################
-# Product Bucket
-#################################################################
-resource "aws_s3_bucket" "product" {
-  bucket = "uptoyoushop-product-bucket-${data.aws_caller_identity.current.account_id}"
-
-  tags = merge(var.common_tags, {
-    Name = "Product"
-  })
-}
-
-#################################################################
-# Product Bucket Encryption
-#################################################################
-resource "aws_s3_bucket_server_side_encryption_configuration" "product" {
-  bucket = aws_s3_bucket.product.id
-
-  rule {
-    apply_server_side_encryption_by_default {
-      sse_algorithm = "AES256"
-    }
-  }
-}
-
-#################################################################
-# Product Bucket Public Access Block
-#################################################################
-resource "aws_s3_bucket_public_access_block" "product" {
-  bucket = aws_s3_bucket.product.id
+  bucket = each.value.id
 
   block_public_acls       = true
   block_public_policy     = true

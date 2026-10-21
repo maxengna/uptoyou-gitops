@@ -1,19 +1,14 @@
-output "category_bucket_name" {
+output "uptoyoushop_bk_name" {
   description = "Name of the S3 bucket"
-  value       = aws_s3_bucket.category.bucket
+  value       = aws_s3_bucket.uptoyoushop-bk.bucket
 }
 
-output "category_bucket_arn" {
+output "uptoyoushop_bk_arn" {
   description = "ARN of the S3 bucket"
-  value       = aws_s3_bucket.category.arn
+  value       = aws_s3_bucket.uptoyoushop-bk.arn
 }
 
-output "product_bucket_name" {
-  description = "Name of the S3 bucket"
-  value       = aws_s3_bucket.product.bucket
-}
-
-output "product_bucket_arn" {
-  description = "ARN of the S3 bucket"
-  value       = aws_s3_bucket.product.arn
+output "app_s3_role_arn" {
+  description = "ARN of the S3 role"
+  value       = aws_iam_role.app_s3_role.arn
 }

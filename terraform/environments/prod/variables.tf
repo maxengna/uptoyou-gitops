@@ -100,4 +100,12 @@ variable "addons" {
   description = "map of eks addons"
 }
 
+variable "s3_bucket" {
+  type = map(object({
+    bucket_name     = string
+    bucket_tag_name = string
+  }))
+  description = "map of s3 buckets"
+}
+
 

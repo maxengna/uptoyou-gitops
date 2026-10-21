@@ -2,7 +2,7 @@
 # S3 ROLE
 #################################################################
 resource "aws_iam_role" "app_s3_role" {
-  name = "${var.naming_prefix}-app-s3-upload-role"
+  name = "${var.naming_prefix}-app-s3-role"
 
   assume_role_policy = jsonencode({
     Version = "2012-10-17"

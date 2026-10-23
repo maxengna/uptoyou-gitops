@@ -16,7 +16,7 @@ spec:
       labels:
         app: uptoyoushop
     spec:
-      serviceAccountName: backend-s3-sa
+      serviceAccountName: backend-sa
       containers:
         - name: backend-app
           image: /uptoyoushop-backend:8909048

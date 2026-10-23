@@ -16,6 +16,7 @@ spec:
       labels:
         app: uptoyoushop
     spec:
+      serviceAccountName: frontend-sa
       containers:
         - name: frontend-app
           image: /uptoyoushop-frontend:8909048

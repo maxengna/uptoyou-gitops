@@ -28,11 +28,19 @@ resource "aws_iam_role" "frontend_role" {
 }
 
 ################################################################################
-# FRONTEND ROLE POLICY ATTACHMENT 
+# FRONTEND SECRETS ROLE POLICY ATTACHMENT 
 ################################################################################
 resource "aws_iam_role_policy_attachment" "frontend_role_policy_attachment" {
   role       = aws_iam_role.frontend_role.name
   policy_arn = module.external_secrets_operator.external_secrets_policy.arn
+}
+
+################################################################################
+# FRONTEND ECR ROLE POLICY ATTACHMENT 
+################################################################################
+resource "aws_iam_role_policy_attachment" "frontend_ecr_policy_attachment" {
+  role       = aws_iam_role.frontend_role.name
+  policy_arn = module.ecr.frontend_ecr_policy.arn
 }
 
 

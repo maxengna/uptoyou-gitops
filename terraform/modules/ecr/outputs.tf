@@ -1,9 +1,9 @@
-output "backend_ecr_repository_url" {
-  description = "The URL of the ECR repository for the backend"
-  value       = aws_ecr_repository.backend.repository_url
+output "backend_ecr_policy_arn" {
+  description = "The ARN of the ECR policy for the backend"
+  value       = aws_iam_policy.backend_ecr_policy.arn
 }
 
-output "frontend_ecr_repository_url" {
-  description = "The URL of the ECR repository for the frontend"
-  value       = aws_ecr_repository.frontend.repository_url
+output "frontend_ecr_policy_arn" {
+  description = "The ARN of the ECR policy for the frontend"
+  value       = aws_iam_policy.frontend_ecr_policy.arn
 }

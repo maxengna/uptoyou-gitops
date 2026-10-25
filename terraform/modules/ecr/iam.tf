@@ -3,7 +3,7 @@
 # ECR POLICY FOR PULL BACKEND IMAGES
 ################################################################################
 resource "aws_iam_policy" "backend_ecr_policy" {
-  name        = "ecr-pull-policy"
+  name        = "${var.naming_prefix}-backend-ecr-policy"
   description = "Allow pull images from ECR"
 
   policy = jsonencode({

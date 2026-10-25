@@ -10,7 +10,7 @@ locals {
 ################################################################################
 module "vpc" {
   source              = "../../modules/vpc"
-  vpc_cidr            = var.vpc.cidr
+  vpc_cidr            = var.vpc_cidr
   naming_prefix       = var.naming_prefix
   security_groups     = var.security_groups
   common_tags         = local.common_tags
@@ -32,7 +32,8 @@ module "eks" {
   cluster_config     = var.cluster_config
   naming_prefix      = var.naming_prefix
   node_groups        = var.node_groups
-  addons             = var.addons
+  standard_addons    = var.standard_addons
+  ebs_csi            = var.ebs_csi
 }
 
 ################################################################################

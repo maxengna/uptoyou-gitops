@@ -28,7 +28,7 @@ resource "aws_iam_role" "backend_role" {
 }
 
 ################################################################################
-# BACKEND SECRETS POLICY ATTACHMENT 
+# BACKEND SECRETS ROLE POLICY ATTACHMENT 
 ################################################################################
 resource "aws_iam_role_policy_attachment" "backend_secrets_policy_attachment" {
   role       = aws_iam_role.backend_role.name

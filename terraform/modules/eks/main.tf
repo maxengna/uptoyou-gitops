@@ -26,7 +26,7 @@ resource "aws_eks_cluster" "uptoyoushop-eks-cluster" {
 resource "aws_eks_node_group" "uptoyoushop-node-group" {
   for_each        = { for node_group in var.node_groups : node_group.name => node_group }
   cluster_name    = aws_eks_cluster.uptoyoushop-eks-cluster.name
-  node_group_name = "${var.naming.prefix}-${each.value.name}"
+  node_group_name = "${var.naming_prefix}-${each.value.name}"
   node_role_arn   = aws_iam_role.NodeGroupRole.arn
   subnet_ids      = flatten(module.vpc.public_subnets_ids)
 
@@ -69,27 +69,58 @@ resource "aws_iam_openid_connect_provider" "eks-oidc-provider" {
 }
 
 ################################################################################
-# EKS Addons
+# EKS Addons : KUBE PROXEY, VPC-CNI,CoreDNS
 ################################################################################
-data "aws_eks_addon_version" "eks_addons" {
-  for_each = var.addons
+data "aws_eks_addon_version" "standard_addons_version" {
+  for_each = var.standard_addons
 
   addon_name         = each.value.name
   kubernetes_version = aws_eks_cluster.uptoyoushop-eks-cluster.version
   most_recent        = coalesce(each.value.most_recent, true)
 }
 
-resource "aws_eks_addon" "addons" {
-  for_each = var.addons
+resource "aws_eks_addon" "standard_addons" {
+  for_each = var.standard_addons
 
   cluster_name                = aws_eks_cluster.uptoyoushop-eks-cluster.name
   addon_name                  = each.value.name
-  addon_version               = coalesce(each.value.version, data.aws_eks_addon_version.eks_addons[each.key].version)
+  addon_version               = coalesce(each.value.version, data.aws_eks_addon_version.standard_addons[each.key].version)
   service_account_role_arn    = optional(each.value.service_account_role_arn)
   resolve_conflicts_on_create = "OVERWRITE"
 
   tags = merge(var.common_tags, {
     Name = "${var.naming_prefix}-addon-${each.value.name}"
   })
-  depends_on = optional([each.value.depends_on])
+  depends_on = [aws_eks_node_group.uptoyoushop-node-group]
 }
+
+
+################################################################################
+# EXTRA EKS Addons : EBS CSI 
+################################################################################
+data "aws_eks_addon_version" "ebs_csi_version" {
+  for_each = var.ebs_csi
+
+  addon_name         = each.value.name
+  kubernetes_version = aws_eks_cluster.uptoyoushop-eks-cluster.version
+  most_recent        = coalesce(each.value.most_recent, true)
+}
+
+resource "aws_eks_addon" "ebs_csi" {
+  for_each = var.ebs_csi
+
+  cluster_name                = aws_eks_cluster.uptoyoushop-eks-cluster.name
+  addon_name                  = each.value.name
+  addon_version               = coalesce(each.value.version, data.aws_eks_addon_version.ebs_csi[each.key].version)
+  service_account_role_arn    = optional(each.value.service_account_role_arn)
+  resolve_conflicts_on_create = "OVERWRITE"
+
+  tags = merge(var.common_tags, {
+    Name = "${var.naming_prefix}-addon-${each.value.name}"
+  })
+  depends_on = [
+    aws_eks_node_group.uptoyoushop-node-group,
+    aws_iam_role.aws_iam_role.ebs_csi_role
+  ]
+}
+

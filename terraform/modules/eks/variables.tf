@@ -45,17 +45,25 @@ variable "node_groups" {
   }))
 }
 
-variable "addons" {
+variable "standard_addons" {
   type = map(object({
     name                     = string
     version                  = optional(string)
     most_recent              = optional(bool)
     service_account_role_arn = optional(string)
-    depends_on               = optional(list(string))
-    # resolve_conflicts = optional(string)
-    # resolve_conflicts_on_update = optional(string)
   }))
-  description = "map of eks addons"
+  description = "map of eks standard addons"
+}
+
+
+variable "ebs_csi" {
+  type = map(object({
+    name                     = string
+    version                  = optional(string)
+    most_recent              = optional(bool)
+    service_account_role_arn = optional(string)
+  }))
+  description = "map of ebs-csi addons"
 }
 
 

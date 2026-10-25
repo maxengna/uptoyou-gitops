@@ -3,7 +3,7 @@
 ################################################################################
 resource "aws_iam_role" "EKSClusterRole" {
   name = "${var.naming_prefix}-EKSClusterRole"
-  assume_role_policy = jsoncode({
+  assume_role_policy = jsonencode({
     Version = "2012-10-17"
     Statement = [
       {
@@ -37,11 +37,14 @@ resource "aws_iam_role_policy_attachment" "AmazonEKSClusterPolicy" {
 ################################################################################
 resource "aws_iam_role" "NodeGroupRole" {
   name = "${var.naming_prefix}-EKSNodeGroupRole"
-  assume_role_policy = jsoncode({
+  assume_role_policy = jsonencode({
     Version = "2012-10-17"
     Statement = [{
       Action : "sts:AssumeRole"
-
+      Effect = "Allow"
+      Principal = {
+        Service = "ec2.amazonaws.com"
+      }
     }]
   })
 
@@ -74,7 +77,7 @@ resource "aws_iam_role_policy_attachment" "AmazonEKS_CNI_Policy" {
 ################################################################################
 resource "aws_iam_role" "ebs_csi_role" {
   name = "${var.naming_prefix}-ebs-csi-role"
-  assume_role_policy = jsoncode({
+  assume_role_policy = jsonencode({
     Version = "2012-10-17"
     Statement = [
       {
@@ -82,12 +85,12 @@ resource "aws_iam_role" "ebs_csi_role" {
         Action = "sts:AssumeRoleWithWebIdentity"
         Principal = {
           Type       = "Federated"
-          Identifier = module.eks.oidc_provider_arn
+          Identifier = aws_iam_openid_connect_provider.eks-oidc-provider.arn
         }
 
         Condition = {
           StringEquals = {
-            "${replace(module.eks.cluster_oidc_issuer_url, "https://", "")}:sub" = "system:serviceaccount:kube-system:ebs-csi-controller-sa"
+            "${replace(aws_iam_openid_connect_provider.eks-oidc-provider.url, "https://", "")}:sub" = "system:serviceaccount:kube-system:ebs-csi-controller-sa"
           }
         }
       }
@@ -112,19 +115,19 @@ resource "aws_iam_role_policy_attachment" "ebs_csi_role_policy_attachment" {
 ################################################################################
 resource "aws_iam_role" "lb_controller_role" {
   name = "${var.naming_prefix}-lb-controller"
-  assume_role_policy = jsoncode({
+  assume_role_policy = jsonencode({
     Version = "2012-10-17"
-    statement = [
+    Statement = [
       {
         Effect  = "Allow"
-        actions = ["sts:AssumeRoleWithWebIdentity"]
+        Actions = ["sts:AssumeRoleWithWebIdentity"]
         Principal = {
           Type       = "Federated"
-          Identifier = module.eks.oidc_provider_arn
+          Identifier = aws_iam_openid_connect_provider.eks-oidc-provider.arn
         }
-        condition = {
+        Condition = {
           StringEquals = {
-            "${replace(module.eks.cluster_oidc_issuer_url, "https://", "")}:sub" = "system:serviceaccount:kube-system:aws-load-balancer-controller"
+            "${replace(aws_iam_openid_connect_provider.eks-oidc-provider.url, "https://", "")}:sub" = "system:serviceaccount:kube-system:aws-load-balancer-controller"
           }
         }
       }

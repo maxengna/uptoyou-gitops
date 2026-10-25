@@ -5,7 +5,7 @@
 resource "aws_s3_bucket" "uptoyoushop-bk" {
   for_each = var.s3_bucket
 
-  bucket = each.value.bucket_name
+  bucket = "${each.value.bucket_name}-${data.aws_caller_identity.current.account_id}"
 
   tags = merge(var.common_tags, {
     Name = each.value.bucket_tag_name

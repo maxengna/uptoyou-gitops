@@ -3,47 +3,47 @@
 ################################################################################
 output "cluster_endpoint" {
   description = "Endpoint for EKS control plane"
-  value       = aws_eks_cluster.eks-cluster.Endpoint
+  value       = aws_eks_cluster.uptoyoushop-eks-cluster.endpoint
 }
 
 output "cluster_name" {
   description = "EKS_cluster_name"
-  value       = aws_eks_cluster.eks-cluster.name
+  value       = aws_eks_cluster.uptoyoushop-eks-cluster.name
 }
 
 output "cluster_certificate_authority_data" {
   description = "EKS_cluster_certificate_authority_data"
-  value       = aws_eks_cluster.eks-cluster.certificate_authority[0].data
+  value       = aws_eks_cluster.uptoyoushop-eks-cluster.certificate_authority[0].data
 }
 
 output "cluster_id" {
   description = "EKS_cluster_id"
-  value       = aws_eks_cluster.eks-cluster.id
+  value       = aws_eks_cluster.uptoyoushop-eks-cluster.id
 }
 
 output "cluster_arn" {
   description = "EKS_cluster_arn"
-  value       = aws_eks_cluster.eks-cluster.arn
+  value       = aws_eks_cluster.uptoyoushop-eks-cluster.arn
 }
 
 output "cluster_version" {
   description = "EKS_cluster_version"
-  value       = aws_eks_cluster.eks-cluster.version
+  value       = aws_eks_cluster.uptoyoushop-eks-cluster.version
 }
 
 output "cluster_security_group_id" {
   description = "EKS_cluster_security_group_id"
-  value       = aws_eks_cluster.eks-cluster.vpc_config[0].security_group_ids
+  value       = aws_eks_cluster.uptoyoushop-eks-cluster.vpc_config[0].security_group_ids
 }
 
 output "oidc_provider_arn" {
   description = "The ARN of the OIDC Provider for the EKS cluster"
-  value       = aws_eks_cluster.eks-cluster.identity[0].oidc[0].issuer
+  value       = aws_iam_openid_connect_provider.eks-oidc-provider.arn
 }
 
 output "oidc_provider_url" {
   description = "The URL of the OIDC Provider for the EKS cluster"
-  value       = aws_eks_cluster.eks-cluster.identity[0].oidc[0].url
+  value       = aws_iam_openid_connect_provider.eks-oidc-provider.url
 }
 
 output "node_groups" {

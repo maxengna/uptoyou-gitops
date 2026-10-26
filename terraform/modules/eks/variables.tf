@@ -47,10 +47,9 @@ variable "node_groups" {
 
 variable "standard_addons" {
   type = map(object({
-    name                     = string
-    version                  = optional(string)
-    most_recent              = optional(bool)
-    service_account_role_arn = optional(string)
+    name        = string
+    version     = optional(string)
+    most_recent = optional(bool)
   }))
   description = "map of eks standard addons"
 }

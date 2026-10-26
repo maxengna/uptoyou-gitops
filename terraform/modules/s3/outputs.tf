@@ -1,11 +1,11 @@
 output "uptoyoushop_bk_name" {
-  description = "Name of the S3 bucket"
-  value       = aws_s3_bucket.uptoyoushop-bk.bucket
+  description = "Map S3 bucket"
+  value       = { for k, v in aws_s3_bucket.uptoyoushop-bk : k => v.bucket }
 }
 
 output "uptoyoushop_bk_arn" {
   description = "ARN of the S3 bucket"
-  value       = aws_s3_bucket.uptoyoushop-bk.arn
+  value       = { for k, v in aws_s3_bucket.uptoyoushop-bk : k => v.arn }
 }
 
 # output "app_s3_role_arn" {

@@ -46,10 +46,10 @@ resource "aws_iam_policy" "app_s3_policy" {
           "s3:ListBucket"
         ]
         Resource = [
-          aws_s3_bucket.category_bucket.arn,
-          "${aws_s3_bucket.category_bucket.arn}/*",
-          aws_s3_bucket.product_bucket.arn,
-          "${aws_s3_bucket.product_bucket.arn}/*"
+          "arn:aws:s3:::uptoyoushop-category-bucket",
+          "arn:aws:s3:::uptoyoushop-category-bucket/*",
+          "arn:aws:s3:::uptoyoushop-product-bucket",
+          "arn:aws:s3:::uptoyoushop-product-bucket/*"
         ]
       }
     ]

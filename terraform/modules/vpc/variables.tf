@@ -19,10 +19,10 @@ variable "public_subnet_cidr" {
 }
 
 
-variable "private_subnet_cidr" {
-  type        = list(string)
-  description = "Private Subnet CIDR values"
-}
+# variable "private_subnet_cidr" {
+#   type        = list(string)
+#   description = "Private Subnet CIDR values"
+# }
 
 
 variable "public_rt_cidr" {
@@ -60,7 +60,6 @@ variable "security_groups" {
   }))
   description = "List of security groups with ingress rules"
 }
-
 
 
 

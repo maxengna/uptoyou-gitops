@@ -32,7 +32,7 @@ resource "aws_iam_role" "frontend_role" {
 ################################################################################
 resource "aws_iam_role_policy_attachment" "frontend_role_policy_attachment" {
   role       = aws_iam_role.frontend_role.name
-  policy_arn = module.external_secrets_operator.external_secrets_policy.arn
+  policy_arn = var.external_secrets_policy_arn
 }
 
 ################################################################################
@@ -40,7 +40,7 @@ resource "aws_iam_role_policy_attachment" "frontend_role_policy_attachment" {
 ################################################################################
 resource "aws_iam_role_policy_attachment" "frontend_ecr_policy_attachment" {
   role       = aws_iam_role.frontend_role.name
-  policy_arn = module.ecr.frontend_ecr_policy.arn
+  policy_arn = var.frontend_ecr_policy_arn
 }
 
 

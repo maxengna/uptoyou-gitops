@@ -11,11 +11,24 @@ variable "naming_prefix" {
 variable "oidc_provider_arn" {
   type        = string
   description = "OIDC provider ARN"
-  default     = module.eks.oidc_provider_arn
 }
 
 variable "oidc_provider_url" {
   type        = string
   description = "OIDC provider URL"
-  default     = module.eks.oidc_provider_url
+}
+
+variable "external_secrets_policy_arn" {
+  type        = string
+  description = "External Secrets Operator policy ARN"
+}
+
+variable "app_s3_policy_arn" {
+  type        = string
+  description = "App S3 policy ARN"
+}
+
+variable "backend_ecr_policy_arn" {
+  type        = string
+  description = "Backend ECR policy ARN"
 }

@@ -32,7 +32,7 @@ resource "aws_iam_role" "backend_role" {
 ################################################################################
 resource "aws_iam_role_policy_attachment" "backend_secrets_policy_attachment" {
   role       = aws_iam_role.backend_role.name
-  policy_arn = module.external_secrets_policy_arn
+  policy_arn = var.external_secrets_policy_arn
 }
 
 ################################################################################
@@ -40,7 +40,7 @@ resource "aws_iam_role_policy_attachment" "backend_secrets_policy_attachment" {
 ################################################################################
 resource "aws_iam_role_policy_attachment" "backend_s3_policy_attachment" {
   role       = aws_iam_role.backend_role.name
-  policy_arn = module.s3.app_s3_policy.arn
+  policy_arn = var.app_s3_policy_arn
 }
 
 ################################################################################
@@ -48,7 +48,7 @@ resource "aws_iam_role_policy_attachment" "backend_s3_policy_attachment" {
 ################################################################################
 resource "aws_iam_role_policy_attachment" "backend_ecr_policy_attachment" {
   role       = aws_iam_role.backend_role.name
-  policy_arn = module.ecr.backend_ecr_policy.arn
+  policy_arn = var.backend_ecr_policy_arn
 }
 
 

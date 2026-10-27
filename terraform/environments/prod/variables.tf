@@ -18,10 +18,10 @@ variable "public_subnet_cidr" {
   description = "Public Subnet CIDR values"
 }
 
-variable "private_subnet_cidr" {
-  type        = list(string)
-  description = "Private Subnet CIDR values"
-}
+# variable "private_subnet_cidr" {
+#   type        = list(string)
+#   description = "Private Subnet CIDR values"
+# }
 
 variable "public_rt_cidr" {
   type        = string
@@ -113,5 +113,8 @@ variable "s3_bucket" {
   }))
   description = "map of s3 buckets"
 }
+
+
+
 
 

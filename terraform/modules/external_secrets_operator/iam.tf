@@ -1,6 +1,9 @@
 ################################################################################
 # EXTERNAL SECRETS OPERATOR POLICY
 ################################################################################
+data "aws_caller_identity" "current" {}
+data "aws_region" "current" {}
+
 resource "aws_iam_policy" "external_secrets_policy" {
   name        = "${var.naming_prefix}-external-secrets-policy"
   description = "Allow external secrets operator to read from AWS Secrets Manager"

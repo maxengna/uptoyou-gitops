@@ -25,7 +25,7 @@ resource "aws_iam_policy" "backend_ecr_policy" {
           "ecr:GetDownloadUrlForLayer",
         ]
         Resource = [
-          aws_ecr_repository.backend.arn
+          "arn:aws:ecr:ap-southeast-1:575108951885:repository/uptoyoushop-backend"
         ]
       }
     ]
@@ -58,7 +58,7 @@ resource "aws_iam_policy" "frontend_ecr_policy" {
           "ecr:GetDownloadUrlForLayer",
         ]
         Resource = [
-          aws_ecr_repository.frontend.arn
+          "arn:aws:ecr:ap-southeast-1:575108951885:repository/uptoyoushop-frontend"
         ]
       }
     ]

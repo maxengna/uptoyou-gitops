@@ -22,23 +22,25 @@ resource "aws_subnet" "public_subnets" {
   map_public_ip_on_launch = true
 
   tags = merge(var.common_tags, {
-    Name = "public-subnet-${count.index}"
+    Name                                            = "public-subnet-${count.index}"
+    "kubernetes.io/role/elb"                        = "1"
+    "kubernetes.io/cluster/uptoyoushop-eks-cluster" = "shared"
   })
 }
 
 ################################################################################
 # Private Subnet
 ################################################################################
-resource "aws_subnet" "private_subnets" {
-  count             = length(var.private_subnet_cidr)
-  vpc_id            = aws_vpc.uptoyoushop-main.id
-  cidr_block        = element(var.private_subnet_cidr, count.index)
-  availability_zone = element(var.azs, count.index)
+# resource "aws_subnet" "private_subnets" {
+#   count             = length(var.private_subnet_cidr)
+#   vpc_id            = aws_vpc.uptoyoushop-main.id
+#   cidr_block        = element(var.private_subnet_cidr, count.index)
+#   availability_zone = element(var.azs, count.index)
 
-  tags = merge(var.common_tags, {
-    Name = "private-subnet-${count.index}"
-  })
-}
+#   tags = merge(var.common_tags, {
+#     Name = "private-subnet-${count.index}"
+#   })
+# }
 
 ################################################################################
 # Internet Gateway

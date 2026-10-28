@@ -44,7 +44,7 @@ resource "aws_iam_policy" "db_secrets_policy" {
           "secretsmanager:DescribeSecret"
         ]
         Resource = [
-          "arn:aws:secretsmanager:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:secret:postgres/uptoyoushop-*"
+          "arn:aws:secretsmanager:${data.aws_region.current.region}:${data.aws_caller_identity.current.account_id}:secret:postgres/uptoyoushop-*"
         ]
       }
     ]

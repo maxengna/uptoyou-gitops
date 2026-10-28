@@ -21,7 +21,7 @@ variable "public_subnets_id" {
 }
 
 variable "security_groups_id" {
-  type        = list(string)
+  type        = map(string)
   description = "Security Group IDs"
 }
 
@@ -57,10 +57,9 @@ variable "standard_addons" {
 
 variable "ebs_csi" {
   type = map(object({
-    name                     = string
-    version                  = optional(string)
-    most_recent              = optional(bool)
-    service_account_role_arn = optional(string)
+    name        = string
+    version     = optional(string)
+    most_recent = optional(bool)
   }))
   description = "map of ebs-csi addons"
 }

@@ -47,7 +47,7 @@ resource "aws_iam_role_policy_attachment" "frontend_ecr_policy_attachment" {
 ################################################################################
 # FRONTEND SERVICE ACCOUNT 
 ################################################################################
-resource "kubernetes_service_account" "frontend_sa" {
+resource "kubernetes_service_account_v1" "frontend_sa" {
   metadata {
     name      = "frontend-sa"
     namespace = "uptoyoushop"

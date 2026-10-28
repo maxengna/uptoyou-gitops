@@ -55,7 +55,7 @@ resource "aws_iam_role_policy_attachment" "backend_ecr_policy_attachment" {
 ################################################################################
 # BACKEND SERVICE ACCOUNT 
 ################################################################################
-resource "kubernetes_service_account" "backend_sa" {
+resource "kubernetes_service_account_v1" "backend_sa" {
   metadata {
     name      = "backend-sa"
     namespace = "uptoyoushop"

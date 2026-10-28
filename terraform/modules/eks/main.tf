@@ -88,7 +88,7 @@ resource "aws_eks_addon" "standard_addons" {
 
   cluster_name                = aws_eks_cluster.uptoyoushop-eks-cluster.name
   addon_name                  = each.value.name
-  addon_version               = coalesce(each.value.version, data.aws_eks_addon_version.standard_addons[each.key].version)
+  addon_version               = coalesce(each.value.version, data.aws_eks_addon_version.standard_addons_version[each.key].version)
   resolve_conflicts_on_create = "OVERWRITE"
 
   tags = merge(var.common_tags, {
@@ -114,8 +114,8 @@ resource "aws_eks_addon" "ebs_csi" {
 
   cluster_name                = aws_eks_cluster.uptoyoushop-eks-cluster.name
   addon_name                  = each.value.name
-  addon_version               = coalesce(each.value.version, data.aws_eks_addon_version.ebs_csi[each.key].version)
-  service_account_role_arn    = optional(each.value.service_account_role_arn)
+  addon_version               = coalesce(each.value.version, data.aws_eks_addon_version.ebs_csi_version[each.key].version)
+  service_account_role_arn    = aws_iam_role.ebs_csi_role.arn
   resolve_conflicts_on_create = "OVERWRITE"
 
   tags = merge(var.common_tags, {
@@ -123,7 +123,7 @@ resource "aws_eks_addon" "ebs_csi" {
   })
   depends_on = [
     aws_eks_node_group.uptoyoushop-node-group,
-    aws_iam_role.aws_iam_role.ebs_csi_role
+    aws_iam_role_policy_attachment.ebs_csi_role_policy_attachment
   ]
 }
 

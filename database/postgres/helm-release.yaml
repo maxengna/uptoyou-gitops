@@ -19,8 +19,8 @@ spec:
       repository: bitnamilegacy/postgresql
       tag: 16.4.0-debian-12-r14
     serviceAccount:
-      create: false
-      name: db-secrets-sa
+      create: true
+      name: "" # postgres-postgresql
     auth:
       existingSecret: uptoyoushop-secret
       secretKeys:
@@ -81,6 +81,3 @@ spec:
     rbac:
       create: true
 
-    serviceAccount:
-      create: true
-      name: postgres

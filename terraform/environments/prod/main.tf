@@ -48,11 +48,13 @@ module "s3" {
 
 
 ################################################################################
-# CREATE EXTERNAL SECRETS POLICY
+# CREATE EXTERNAL SECRETS OPERATOR ROLE & POLICY
 ################################################################################
-module "external_secrets_policy" {
-  source        = "../../modules/external_secrets_operator"
-  naming_prefix = var.naming_prefix
+module "external_secrets_operator" {
+  source            = "../../modules/external_secrets_operator"
+  naming_prefix     = var.naming_prefix
+  oidc_provider_arn = module.eks.oidc_provider_arn
+  oidc_provider_url = module.eks.oidc_provider_url
 }
 
 ################################################################################
@@ -64,39 +66,26 @@ module "ecr" {
 }
 
 ################################################################################
-# CREATE DB IAM
-################################################################################
-module "db_iam" {
-  source            = "../../modules/iam/db_iam"
-  naming_prefix     = var.naming_prefix
-  oidc_provider_arn = module.eks.oidc_provider_arn
-  oidc_provider_url = module.eks.oidc_provider_url
-  common_tags       = local.common_tags
-}
-
-################################################################################
 # CREATE BACKEND IAM
 ################################################################################
 module "backend_iam" {
-  source                      = "../../modules/iam/backend_iam"
-  naming_prefix               = var.naming_prefix
-  oidc_provider_arn           = module.eks.oidc_provider_arn
-  oidc_provider_url           = module.eks.oidc_provider_url
-  external_secrets_policy_arn = module.external_secrets_policy.external_secrets_policy_arn
-  app_s3_policy_arn           = module.s3.app_s3_policy_arn
-  backend_ecr_policy_arn      = module.ecr.backend_ecr_policy_arn
-  common_tags                 = local.common_tags
+  source                 = "../../modules/iam/backend_iam"
+  naming_prefix          = var.naming_prefix
+  oidc_provider_arn      = module.eks.oidc_provider_arn
+  oidc_provider_url      = module.eks.oidc_provider_url
+  app_s3_policy_arn      = module.s3.app_s3_policy_arn
+  backend_ecr_policy_arn = module.ecr.backend_ecr_policy_arn
+  common_tags            = local.common_tags
 }
 
 ################################################################################
 # CREATE FRONTEND IAM
 ################################################################################
 module "frontend_iam" {
-  source                      = "../../modules/iam/frontend_iam"
-  naming_prefix               = var.naming_prefix
-  oidc_provider_arn           = module.eks.oidc_provider_arn
-  oidc_provider_url           = module.eks.oidc_provider_url
-  external_secrets_policy_arn = module.external_secrets_policy.external_secrets_policy_arn
-  frontend_ecr_policy_arn     = module.ecr.frontend_ecr_policy_arn
-  common_tags                 = local.common_tags
+  source                  = "../../modules/iam/frontend_iam"
+  naming_prefix           = var.naming_prefix
+  oidc_provider_arn       = module.eks.oidc_provider_arn
+  oidc_provider_url       = module.eks.oidc_provider_url
+  frontend_ecr_policy_arn = module.ecr.frontend_ecr_policy_arn
+  common_tags             = local.common_tags
 }

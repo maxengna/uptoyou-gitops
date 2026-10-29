@@ -3,8 +3,6 @@ kind: Kustomization
 resources:
   - controllers/aws-load-balancer-controller/
   - controllers/external-secrets-operator/
-  # - controllers/sealed-secrets/
-  # - controllers/ses/
   - configs/
   - observability/alloy/
   - observability/loki/

@@ -18,11 +18,6 @@ variable "oidc_provider_url" {
   description = "OIDC provider URL"
 }
 
-variable "external_secrets_policy_arn" {
-  type        = string
-  description = "External Secrets Operator policy ARN"
-}
-
 variable "frontend_ecr_policy_arn" {
   type        = string
   description = "Frontend ECR policy ARN"

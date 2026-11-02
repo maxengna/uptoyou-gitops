@@ -19,7 +19,7 @@ spec:
       serviceAccountName: frontend-sa
       containers:
         - name: frontend-app
-          image: '575108951885.dkr.ecr.ap-southeast-1.amazonaws.com/uptoyoushop-frontend:'
+          image: '575108951885.dkr.ecr.ap-southeast-1.amazonaws.com/uptoyoushop-frontend:f94599f'
           ports:
             - name: http
               containerPort: 3000

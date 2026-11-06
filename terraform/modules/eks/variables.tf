@@ -20,6 +20,12 @@ variable "public_subnets_id" {
   description = "Public Subnet IDs"
 }
 
+variable "private_subnets_id" {
+  type        = list(string)
+  description = "Private Subnet IDs"
+}
+
+
 variable "security_groups_id" {
   type        = map(string)
   description = "Security Group IDs"

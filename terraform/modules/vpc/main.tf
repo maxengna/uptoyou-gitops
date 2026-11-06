@@ -6,6 +6,7 @@ resource "aws_vpc" "uptoyoushop-main" {
   enable_dns_hostnames = true
   enable_dns_support   = true
 
+
   tags = merge(var.common_tags, {
     Name = "main"
   })
@@ -21,6 +22,7 @@ resource "aws_subnet" "public_subnets" {
   availability_zone       = element(var.azs, count.index)
   map_public_ip_on_launch = true
 
+
   tags = merge(var.common_tags, {
     Name                                            = "public-subnet-${count.index}"
     "kubernetes.io/role/elb"                        = "1"
@@ -28,19 +30,6 @@ resource "aws_subnet" "public_subnets" {
   })
 }
 
-################################################################################
-# Private Subnet
-################################################################################
-# resource "aws_subnet" "private_subnets" {
-#   count             = length(var.private_subnet_cidr)
-#   vpc_id            = aws_vpc.uptoyoushop-main.id
-#   cidr_block        = element(var.private_subnet_cidr, count.index)
-#   availability_zone = element(var.azs, count.index)
-
-#   tags = merge(var.common_tags, {
-#     Name = "private-subnet-${count.index}"
-#   })
-# }
 
 ################################################################################
 # Internet Gateway
@@ -77,6 +66,74 @@ resource "aws_route_table_association" "public_subnet_asso" {
   subnet_id      = element(aws_subnet.public_subnets[*].id, count.index)
   route_table_id = aws_route_table.uptoyoushop-public-rt.id
 }
+
+################################################################################
+# Elastic IP For Nat Gateway
+################################################################################
+resource "aws_eip" "eip-nat" {
+  domain = "vpc"
+
+  tags = merge(var.common_tags, {
+    Name = "nat-gateway-eip"
+  })
+}
+
+################################################################################
+# Nat Gateway
+################################################################################
+resource "aws_nat_gateway" "nat" {
+  allocation_id = aws_eip.eip-nat.id
+  subnet_id     = aws_subnet.public_subnets[0].id
+
+  tags = merge(var.common_tags, {
+    Name = "main-nat-gateway"
+  })
+
+  depends_on = [aws_internet_gateway.gw]
+}
+
+################################################################################
+# Private Subnet
+################################################################################
+resource "aws_subnet" "private_subnets" {
+  count             = length(var.private_subnet_cidr)
+  vpc_id            = aws_vpc.uptoyoushop-main.id
+  cidr_block        = element(var.private_subnet_cidr, count.index)
+  availability_zone = element(var.azs, count.index)
+
+  tags = merge(var.common_tags, {
+    Name                              = "private-subnet-${count.index}"
+    "kubernetes.io/role/internal-elb" = "1"
+  })
+}
+
+
+################################################################################
+# Route Table For Private Subnet
+################################################################################
+resource "aws_route_table" "uptoyoushop-private-rt" {
+  vpc_id = aws_vpc.uptoyoushop-main.id
+
+  route {
+    cidr_block     = var.private_rt_cidr
+    nat_gateway_id = aws_nat_gateway.nat.id
+  }
+
+  tags = merge(var.common_tags, {
+    Name = "private-rt"
+  })
+}
+
+
+################################################################################
+# Association private subnet with private route table
+################################################################################
+resource "aws_route_table_association" "private_subnet_asso" {
+  count          = length(var.private_subnet_cidr)
+  subnet_id      = element(aws_subnet.private_subnets[*].id, count.index)
+  route_table_id = aws_route_table.uptoyoushop-private-rt.id
+}
+
 
 
 ################################################################################

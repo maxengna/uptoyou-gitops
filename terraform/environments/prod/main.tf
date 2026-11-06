@@ -9,15 +9,16 @@ locals {
 # Create VPC and components
 ################################################################################
 module "vpc" {
-  source             = "../../modules/vpc"
-  vpc_cidr           = var.vpc_cidr
-  naming_prefix      = var.naming_prefix
-  security_groups    = var.security_groups
-  common_tags        = local.common_tags
-  public_subnet_cidr = var.public_subnet_cidr
-  # private_subnet_cidr = var.private_subnet_cidr
-  public_rt_cidr = var.public_rt_cidr
-  azs            = var.azs
+  source              = "../../modules/vpc"
+  vpc_cidr            = var.vpc_cidr
+  naming_prefix       = var.naming_prefix
+  security_groups     = var.security_groups
+  common_tags         = local.common_tags
+  public_subnet_cidr  = var.public_subnet_cidr
+  private_subnet_cidr = var.private_subnet_cidr
+  public_rt_cidr      = var.public_rt_cidr
+  private_rt_cidr     = var.private_rt_cidr
+  azs                 = var.azs
 
 }
 
@@ -27,6 +28,7 @@ module "vpc" {
 module "eks" {
   source             = "../../modules/eks"
   public_subnets_id  = module.vpc.public_subnets_ids
+  private_subnets_id = module.vpc.private_subnets_ids
   security_groups_id = module.vpc.security_groups_id
   common_tags        = local.common_tags
   cluster_config     = var.cluster_config

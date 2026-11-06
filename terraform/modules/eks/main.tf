@@ -11,7 +11,7 @@ resource "aws_eks_cluster" "uptoyoushop-eks-cluster" {
     bootstrap_cluster_creator_admin_permissions = true
   }
   vpc_config {
-    subnet_ids         = var.public_subnets_id
+    subnet_ids         = concat(var.public_subnets_id, var.private_subnets_id)
     security_group_ids = values(var.security_groups_id)
   }
 
@@ -32,7 +32,7 @@ resource "aws_eks_node_group" "uptoyoushop-node-group" {
   cluster_name    = aws_eks_cluster.uptoyoushop-eks-cluster.name
   node_group_name = "${var.naming_prefix}-${each.value.name}"
   node_role_arn   = aws_iam_role.NodeGroupRole.arn
-  subnet_ids      = var.public_subnets_id
+  subnet_ids      = var.private_subnets_id
 
   scaling_config {
     desired_size = try(each.value.scaling_config.desired_size, 1)

@@ -19,15 +19,20 @@ variable "public_subnet_cidr" {
 }
 
 
-# variable "private_subnet_cidr" {
-#   type        = list(string)
-#   description = "Private Subnet CIDR values"
-# }
+variable "private_subnet_cidr" {
+  type        = list(string)
+  description = "Private Subnet CIDR values"
+}
 
 
 variable "public_rt_cidr" {
   type        = string
   description = "public route table CIDR values"
+}
+
+variable "private_rt_cidr" {
+  type        = string
+  description = "private route table CIDR values"
 }
 
 

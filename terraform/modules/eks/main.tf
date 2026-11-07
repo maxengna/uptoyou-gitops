@@ -48,7 +48,7 @@ resource "aws_eks_node_group" "uptoyoushop-node-group" {
   instance_types = each.value.instance_types
   capacity_type  = each.value.capacity_type
   disk_size      = each.value.disk_size
-  version        = each.value.version
+  version        = aws_eks_cluster.uptoyoushop-eks-cluster.version
 
   tags = merge(var.common_tags, {
     Name = "${var.naming_prefix}-nodes-${each.value.name}"

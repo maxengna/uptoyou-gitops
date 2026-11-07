@@ -18,14 +18,14 @@ spec:
     createNamespace: true
   targetNamespace: kube-system #
   values:
-    clusterName: "uptoyou-eks-cluster"
+    clusterName: "uptoyoushop-eks-cluster"
     region: "ap-southeast-1"
-    vpcId: ""
+    vpcId: "vpc-011802fb15642873b"
     serviceAccount:
       create: true
       name: aws-load-balancer-controller
       annotations:
-        eks.amazonaws.com/role-arn: "arn:aws:iam::575108951885:role/uptoyou-eks-cluster-aws-load-balancer-controller-role"
+        eks.amazonaws.com/role-arn: "arn:aws:iam::575108951885:role/uptoyoushop-lb-controller"
     resources:
       requests:
         cpu: 100m

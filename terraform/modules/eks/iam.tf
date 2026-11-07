@@ -84,8 +84,7 @@ resource "aws_iam_role" "ebs_csi_role" {
         Effect = "Allow"
         Action = "sts:AssumeRoleWithWebIdentity"
         Principal = {
-          Type       = "Federated"
-          Identifier = aws_iam_openid_connect_provider.eks-oidc-provider.arn
+          Federated = aws_iam_openid_connect_provider.eks-oidc-provider.arn
         }
 
         Condition = {
@@ -119,11 +118,10 @@ resource "aws_iam_role" "lb_controller_role" {
     Version = "2012-10-17"
     Statement = [
       {
-        Effect  = "Allow"
-        Actions = ["sts:AssumeRoleWithWebIdentity"]
+        Effect = "Allow"
+        Action = ["sts:AssumeRoleWithWebIdentity"]
         Principal = {
-          Type       = "Federated"
-          Identifier = aws_iam_openid_connect_provider.eks-oidc-provider.arn
+          Federated = aws_iam_openid_connect_provider.eks-oidc-provider.arn
         }
         Condition = {
           StringEquals = {

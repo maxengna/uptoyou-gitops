@@ -49,8 +49,8 @@ resource "aws_iam_role_policy_attachment" "backend_ecr_policy_attachment" {
 ################################################################################
 resource "kubernetes_service_account_v1" "backend_sa" {
   metadata {
-    name      = "backend-sa"
-    namespace = "uptoyoushop"
+    name = "backend-sa"
+
 
     annotations = {
       "eks.amazonaws.com/role-arn" = aws_iam_role.backend_role.arn

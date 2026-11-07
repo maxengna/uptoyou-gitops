@@ -41,8 +41,8 @@ resource "aws_iam_role_policy_attachment" "frontend_ecr_policy_attachment" {
 ################################################################################
 resource "kubernetes_service_account_v1" "frontend_sa" {
   metadata {
-    name      = "frontend-sa"
-    namespace = "uptoyoushop"
+    name = "frontend-sa"
+
 
     annotations = {
       "eks.amazonaws.com/role-arn" = aws_iam_role.frontend_role.arn

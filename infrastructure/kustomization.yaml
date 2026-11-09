@@ -4,6 +4,7 @@ resources:
   - controllers/aws-load-balancer-controller/
   - controllers/external-secrets-operator/
   - configs/
+  - observability/namespace
   - observability/alloy/
   - observability/loki/
   - observability/otel-collector/
